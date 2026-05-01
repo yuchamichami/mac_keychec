@@ -1,0 +1,604 @@
+{
+  "name": "modula",
+  "pinsPerSide": 6,
+  "pinLabelsL": [
+    "D0",
+    "D1",
+    "D2",
+    "D3",
+    "P0.09",
+    "P0.10"
+  ],
+  "pinLabelsR": [
+    "D0",
+    "D1",
+    "D2",
+    "D3",
+    "P0.09",
+    "P0.10"
+  ],
+  "positions": [
+    {
+      "idx": 0,
+      "side": "L",
+      "driver": 1,
+      "sensor": 0,
+      "expected": "tab",
+      "label": "&lth … TAB",
+      "testable": true,
+      "binding": "&lth FCN TAB"
+    },
+    {
+      "idx": 1,
+      "side": "L",
+      "driver": 2,
+      "sensor": 0,
+      "expected": "q",
+      "label": "&plt … Q",
+      "testable": true,
+      "binding": "&plt FCN Q"
+    },
+    {
+      "idx": 2,
+      "side": "L",
+      "driver": 3,
+      "sensor": 0,
+      "expected": "w",
+      "label": "W",
+      "testable": true,
+      "binding": "&kp W"
+    },
+    {
+      "idx": 3,
+      "side": "L",
+      "driver": 4,
+      "sensor": 0,
+      "expected": "e",
+      "label": "E",
+      "testable": true,
+      "binding": "&kp E"
+    },
+    {
+      "idx": 4,
+      "side": "L",
+      "driver": 5,
+      "sensor": 0,
+      "expected": "r",
+      "label": "R",
+      "testable": true,
+      "binding": "&kp R"
+    },
+    {
+      "idx": 5,
+      "side": "L",
+      "driver": 2,
+      "sensor": 1,
+      "expected": "t",
+      "label": "T",
+      "testable": true,
+      "binding": "&kp T"
+    },
+    {
+      "idx": 6,
+      "side": "R",
+      "driver": 1,
+      "sensor": 0,
+      "expected": "y",
+      "label": "Y",
+      "testable": true,
+      "binding": "&kp Y"
+    },
+    {
+      "idx": 7,
+      "side": "R",
+      "driver": 2,
+      "sensor": 0,
+      "expected": "u",
+      "label": "U",
+      "testable": true,
+      "binding": "&kp U"
+    },
+    {
+      "idx": 8,
+      "side": "R",
+      "driver": 3,
+      "sensor": 0,
+      "expected": "i",
+      "label": "I",
+      "testable": true,
+      "binding": "&kp I"
+    },
+    {
+      "idx": 9,
+      "side": "R",
+      "driver": 4,
+      "sensor": 0,
+      "expected": "o",
+      "label": "O",
+      "testable": true,
+      "binding": "&kp O"
+    },
+    {
+      "idx": 10,
+      "side": "R",
+      "driver": 5,
+      "sensor": 0,
+      "expected": "p",
+      "label": "P",
+      "testable": true,
+      "binding": "&kp P"
+    },
+    {
+      "idx": 11,
+      "side": "R",
+      "driver": 2,
+      "sensor": 1,
+      "expected": "hyphen",
+      "label": "minus",
+      "testable": true,
+      "binding": "&minus"
+    },
+    {
+      "idx": 12,
+      "side": "L",
+      "driver": 0,
+      "sensor": 2,
+      "expected": "return_or_enter",
+      "label": "&mth … RET",
+      "testable": true,
+      "binding": "&mth LCTRL RET"
+    },
+    {
+      "idx": 13,
+      "side": "L",
+      "driver": 1,
+      "sensor": 2,
+      "expected": "a",
+      "label": "A",
+      "testable": true,
+      "binding": "&kp A"
+    },
+    {
+      "idx": 14,
+      "side": "L",
+      "driver": 3,
+      "sensor": 2,
+      "expected": "s",
+      "label": "S",
+      "testable": true,
+      "binding": "&kp S"
+    },
+    {
+      "idx": 15,
+      "side": "L",
+      "driver": 4,
+      "sensor": 2,
+      "expected": "d",
+      "label": "D",
+      "testable": true,
+      "binding": "&kp D"
+    },
+    {
+      "idx": 16,
+      "side": "L",
+      "driver": 5,
+      "sensor": 2,
+      "expected": "f",
+      "label": "F",
+      "testable": true,
+      "binding": "&kp F"
+    },
+    {
+      "idx": 17,
+      "side": "L",
+      "driver": 3,
+      "sensor": 1,
+      "expected": "g",
+      "label": "G",
+      "testable": true,
+      "binding": "&kp G"
+    },
+    {
+      "idx": 18,
+      "side": "R",
+      "driver": 0,
+      "sensor": 2,
+      "expected": "h",
+      "label": "H",
+      "testable": true,
+      "binding": "&kp H"
+    },
+    {
+      "idx": 19,
+      "side": "R",
+      "driver": 1,
+      "sensor": 2,
+      "expected": "j",
+      "label": "J",
+      "testable": true,
+      "binding": "&kp J"
+    },
+    {
+      "idx": 20,
+      "side": "R",
+      "driver": 3,
+      "sensor": 2,
+      "expected": "k",
+      "label": "K",
+      "testable": true,
+      "binding": "&kp K"
+    },
+    {
+      "idx": 21,
+      "side": "R",
+      "driver": 4,
+      "sensor": 2,
+      "expected": "l",
+      "label": "L",
+      "testable": true,
+      "binding": "&kp L"
+    },
+    {
+      "idx": 22,
+      "side": "R",
+      "driver": 5,
+      "sensor": 2,
+      "expected": "semicolon",
+      "label": "semi",
+      "testable": true,
+      "binding": "&semi"
+    },
+    {
+      "idx": 23,
+      "side": "R",
+      "driver": 3,
+      "sensor": 1,
+      "expected": "7",
+      "label": "sqt",
+      "testable": true,
+      "binding": "&sqt"
+    },
+    {
+      "idx": 24,
+      "side": "L",
+      "driver": 0,
+      "sensor": 3,
+      "expected": "escape",
+      "label": "&mth … ESC",
+      "testable": true,
+      "binding": "&mth LSHIFT ESC"
+    },
+    {
+      "idx": 25,
+      "side": "L",
+      "driver": 1,
+      "sensor": 3,
+      "expected": "z",
+      "label": "Z",
+      "testable": true,
+      "binding": "&kp Z"
+    },
+    {
+      "idx": 26,
+      "side": "L",
+      "driver": 2,
+      "sensor": 3,
+      "expected": "x",
+      "label": "X",
+      "testable": true,
+      "binding": "&kp X"
+    },
+    {
+      "idx": 27,
+      "side": "L",
+      "driver": 4,
+      "sensor": 3,
+      "expected": "c",
+      "label": "C",
+      "testable": true,
+      "binding": "&kp C"
+    },
+    {
+      "idx": 28,
+      "side": "L",
+      "driver": 5,
+      "sensor": 3,
+      "expected": "v",
+      "label": "V",
+      "testable": true,
+      "binding": "&kp V"
+    },
+    {
+      "idx": 29,
+      "side": "L",
+      "driver": 4,
+      "sensor": 1,
+      "expected": "b",
+      "label": "B",
+      "testable": true,
+      "binding": "&kp B"
+    },
+    {
+      "idx": 30,
+      "side": "R",
+      "driver": 0,
+      "sensor": 3,
+      "expected": "n",
+      "label": "N",
+      "testable": true,
+      "binding": "&kp N"
+    },
+    {
+      "idx": 31,
+      "side": "R",
+      "driver": 1,
+      "sensor": 3,
+      "expected": "m",
+      "label": "M",
+      "testable": true,
+      "binding": "&kp M"
+    },
+    {
+      "idx": 32,
+      "side": "R",
+      "driver": 2,
+      "sensor": 3,
+      "expected": "comma",
+      "label": "COMMA",
+      "testable": true,
+      "binding": "&kp COMMA"
+    },
+    {
+      "idx": 33,
+      "side": "R",
+      "driver": 4,
+      "sensor": 3,
+      "expected": "period",
+      "label": "DOT",
+      "testable": true,
+      "binding": "&kp DOT"
+    },
+    {
+      "idx": 34,
+      "side": "R",
+      "driver": 5,
+      "sensor": 3,
+      "expected": "slash",
+      "label": "SLASH",
+      "testable": true,
+      "binding": "&kp SLASH"
+    },
+    {
+      "idx": 35,
+      "side": "R",
+      "driver": 4,
+      "sensor": 1,
+      "expected": "left_command",
+      "label": "LGUI",
+      "testable": true,
+      "binding": "&kp LGUI"
+    },
+    {
+      "idx": 36,
+      "side": "L",
+      "driver": 0,
+      "sensor": 4,
+      "expected": "escape",
+      "label": "ESC",
+      "testable": true,
+      "binding": "&kp ESC"
+    },
+    {
+      "idx": 37,
+      "side": "L",
+      "driver": 1,
+      "sensor": 4,
+      "expected": null,
+      "label": "▽ trans",
+      "testable": false,
+      "binding": "&trans"
+    },
+    {
+      "idx": 38,
+      "side": "L",
+      "driver": 2,
+      "sensor": 4,
+      "expected": null,
+      "label": "▽ trans",
+      "testable": false,
+      "binding": "&trans"
+    },
+    {
+      "idx": 39,
+      "side": "L",
+      "driver": 3,
+      "sensor": 4,
+      "expected": "spacebar",
+      "label": "&lth … SPACE",
+      "testable": true,
+      "binding": "&lth SYMBOL SPACE"
+    },
+    {
+      "idx": 40,
+      "side": "L",
+      "driver": 5,
+      "sensor": 4,
+      "expected": "delete_or_backspace",
+      "label": "&lth … BSPC",
+      "testable": true,
+      "binding": "&lth NAVNUM BSPC"
+    },
+    {
+      "idx": 41,
+      "side": "R",
+      "driver": 0,
+      "sensor": 4,
+      "expected": "left_option",
+      "label": "LALT",
+      "testable": true,
+      "binding": "&kp LALT"
+    },
+    {
+      "idx": 42,
+      "side": "R",
+      "driver": 1,
+      "sensor": 4,
+      "expected": "return_or_enter",
+      "label": "&mt … RET",
+      "testable": true,
+      "binding": "&mt LSHFT RET"
+    },
+    {
+      "idx": 43,
+      "side": "R",
+      "driver": 2,
+      "sensor": 4,
+      "expected": null,
+      "label": "tog MOUSE",
+      "testable": false,
+      "binding": "&tog MOUSE"
+    },
+    {
+      "idx": 44,
+      "side": "R",
+      "driver": 3,
+      "sensor": 4,
+      "expected": null,
+      "label": "▽ trans",
+      "testable": false,
+      "binding": "&trans"
+    },
+    {
+      "idx": 45,
+      "side": "R",
+      "driver": 5,
+      "sensor": 4,
+      "expected": null,
+      "label": "tog SYMBOL",
+      "testable": false,
+      "binding": "&tog SYMBOL"
+    },
+    {
+      "idx": 46,
+      "side": "L",
+      "driver": 3,
+      "sensor": 5,
+      "expected": null,
+      "label": "mb4_alt_gui_n",
+      "testable": false,
+      "binding": "&mb4_alt_gui_n"
+    },
+    {
+      "idx": 47,
+      "side": "L",
+      "driver": 2,
+      "sensor": 5,
+      "expected": null,
+      "label": "⬔ scroll",
+      "testable": false,
+      "binding": "&msc SCUP_S"
+    },
+    {
+      "idx": 48,
+      "side": "L",
+      "driver": 4,
+      "sensor": 5,
+      "expected": "print_screen",
+      "label": "PSCRN",
+      "testable": true,
+      "binding": "&kp PSCRN"
+    },
+    {
+      "idx": 49,
+      "side": "L",
+      "driver": 1,
+      "sensor": 5,
+      "expected": null,
+      "label": "⬔ scroll",
+      "testable": false,
+      "binding": "&msc SCDN_S"
+    },
+    {
+      "idx": 50,
+      "side": "L",
+      "driver": 0,
+      "sensor": 5,
+      "expected": null,
+      "label": "mb5_alt_gui_p",
+      "testable": false,
+      "binding": "&mb5_alt_gui_p"
+    },
+    {
+      "idx": 51,
+      "side": "R",
+      "driver": 2,
+      "sensor": 5,
+      "expected": "left_arrow",
+      "label": "LEFT",
+      "testable": true,
+      "binding": "&kp LEFT"
+    },
+    {
+      "idx": 52,
+      "side": "R",
+      "driver": 0,
+      "sensor": 5,
+      "expected": "up_arrow",
+      "label": "UP",
+      "testable": true,
+      "binding": "&kp UP"
+    },
+    {
+      "idx": 53,
+      "side": "R",
+      "driver": 4,
+      "sensor": 5,
+      "expected": "mute",
+      "label": "C_MUTE",
+      "testable": true,
+      "binding": "&kp C_MUTE"
+    },
+    {
+      "idx": 54,
+      "side": "R",
+      "driver": 3,
+      "sensor": 5,
+      "expected": "down_arrow",
+      "label": "DOWN",
+      "testable": true,
+      "binding": "&kp DOWN"
+    },
+    {
+      "idx": 55,
+      "side": "R",
+      "driver": 1,
+      "sensor": 5,
+      "expected": "right_arrow",
+      "label": "RIGHT",
+      "testable": true,
+      "binding": "&kp RIGHT"
+    },
+    {
+      "idx": 56,
+      "side": "direct",
+      "sub_side": "L",
+      "driver": 6,
+      "sensor": 0,
+      "expected": "mute",
+      "label": "C_MUTE",
+      "testable": true,
+      "binding": "&kp C_MUTE"
+    },
+    {
+      "idx": 57,
+      "side": "direct",
+      "sub_side": "R",
+      "driver": 6,
+      "sensor": 0,
+      "expected": "end",
+      "label": "END",
+      "testable": true,
+      "binding": "&kp END"
+    }
+  ]
+}

@@ -364,6 +364,253 @@
   }
   /* Drag-region for windowed feel (no actual drag) */
   .titlebar-spacer { height: 0; }
+
+  /* ============= Mode switcher ============= */
+  .mode-switcher {
+    display: inline-flex;
+    gap: 4px;
+    background: rgba(0,0,0,0.3);
+    padding: 3px;
+    border-radius: 5px;
+    border: 1px solid var(--divider);
+  }
+  .mode-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 4px 14px;
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 120ms;
+  }
+  .mode-btn.selected {
+    background: var(--accent-cyan);
+    color: var(--bg-window);
+    box-shadow: 0 0 8px rgba(91,209,255,0.4);
+  }
+  .mode-btn:not(.selected):hover { color: var(--text-primary); }
+
+  /* ============= Matrix view ============= */
+  .matrix-container {
+    flex: 1;
+    overflow-y: auto;
+    background: linear-gradient(180deg, #08091A 0%, #0E0F24 100%);
+    border: 1px solid var(--divider);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: none;
+  }
+  .matrix-container.active { display: block; }
+  .log-container.hidden { display: none; }
+  .matrix-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .matrix-controls label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-right: 4px;
+  }
+  .kb-select {
+    background: rgba(0,0,0,0.4);
+    color: var(--text-primary);
+    border: 1px solid var(--divider);
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-family: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .matrix-btn {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--divider);
+    color: var(--text-primary);
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 120ms;
+  }
+  .matrix-btn:hover { border-color: var(--accent-cyan); }
+  .matrix-btn.primary {
+    background: var(--accent-cyan);
+    color: var(--bg-window);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 8px rgba(91,209,255,0.4);
+  }
+  .matrix-help {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+
+  .matrix-side {
+    margin-bottom: 18px;
+  }
+  .matrix-side-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .pin-grid {
+    display: grid;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 6px;
+    overflow: hidden;
+    background: rgba(0,0,0,0.2);
+  }
+  .pin-cell {
+    border-right: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding: 6px 4px;
+    font-size: 10px;
+    text-align: center;
+    min-width: 56px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .pin-cell.label {
+    background: rgba(0,0,0,0.4);
+    color: var(--text-secondary);
+    font-weight: 600;
+    letter-spacing: 1px;
+    font-size: 9px;
+    text-transform: uppercase;
+  }
+  .pin-cell.label-corner {
+    background: rgba(0,0,0,0.5);
+    color: var(--text-secondary);
+    font-size: 8px;
+    line-height: 1.2;
+  }
+  .pin-cell.diagonal {
+    background: repeating-linear-gradient(45deg,
+      rgba(255,255,255,0.02) 0 6px,
+      rgba(255,255,255,0.04) 6px 12px);
+    color: var(--text-secondary);
+  }
+  .pin-cell.empty {
+    background: rgba(255,255,255,0.01);
+  }
+  .pin-cell.key {
+    background: rgba(125,128,144,0.10);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 120ms;
+    font-weight: 500;
+  }
+  .pin-cell.key.untestable {
+    color: var(--text-secondary);
+    background: rgba(255,255,255,0.02);
+    font-style: italic;
+  }
+  .pin-cell.key.pressed {
+    background: rgba(91,255,139,0.18);
+    color: var(--down-green);
+    box-shadow: inset 0 0 0 1px rgba(91,255,139,0.5);
+  }
+  .pin-cell.key.dead {
+    background: rgba(255,95,95,0.18);
+    color: var(--peak-red);
+    box-shadow: inset 0 0 0 1px rgba(255,95,95,0.6);
+  }
+  .pin-cell.key.highlight-row,
+  .pin-cell.key.highlight-col {
+    background: rgba(91,209,255,0.12);
+    box-shadow: inset 0 0 0 1px rgba(91,209,255,0.5);
+  }
+  .pin-cell.key.highlight-target {
+    background: rgba(91,209,255,0.30);
+    box-shadow: 0 0 0 1.5px var(--accent-cyan), 0 0 10px rgba(91,209,255,0.5);
+  }
+  .pin-cell .keylabel {
+    font-size: 11px;
+    line-height: 1.1;
+  }
+  .pin-cell .keymeta {
+    font-size: 8px;
+    color: var(--text-secondary);
+    line-height: 1;
+  }
+
+  .matrix-direct {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .matrix-direct .pin-cell.key {
+    min-width: 100px;
+    border-radius: 4px;
+    border: 1px solid var(--divider);
+  }
+
+  .matrix-summary {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--divider);
+    border-radius: 8px;
+  }
+  .matrix-summary-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .matrix-stat {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    margin-bottom: 8px;
+    align-items: baseline;
+  }
+  .matrix-stat .stat-num {
+    font-size: 20px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .matrix-stat .stat-pressed { color: var(--down-green); }
+  .matrix-stat .stat-dead    { color: var(--peak-red); }
+  .matrix-stat .stat-untouched { color: var(--text-secondary); }
+  .matrix-insight {
+    padding: 6px 10px;
+    margin-top: 4px;
+    font-size: 12px;
+    border-left: 3px solid var(--peak-red);
+    background: rgba(255,95,95,0.08);
+    color: var(--text-primary);
+    border-radius: 0 4px 4px 0;
+  }
+  .matrix-insight.info {
+    border-left-color: var(--accent-cyan);
+    background: rgba(91,209,255,0.06);
+  }
+  .matrix-insight code {
+    color: var(--accent-cyan);
+    font-weight: 700;
+  }
 </style>
 </head>
 <body>
@@ -448,14 +695,35 @@
 
   <div class="log-header">
     <div class="title">Keyboard &amp; pointing events</div>
+    <div class="mode-switcher" id="modeSwitcher">
+      <button class="mode-btn selected" data-mode="events">Events</button>
+      <button class="mode-btn" data-mode="matrix">Matrix</button>
+    </div>
     <div class="count"><span id="evtCount">0</span> events</div>
   </div>
 
-  <div class="log-container">
+  <div class="log-container" id="eventsView">
     <div class="scanline"></div>
     <div class="log-scroll" id="logScroll">
       <div class="empty-msg" id="emptyMsg">Click anywhere or press a key to begin</div>
     </div>
+  </div>
+
+  <div class="matrix-container" id="matrixView">
+    <div class="matrix-controls">
+      <label>Keyboard:</label>
+      <select class="kb-select" id="kbSelect">
+        <option value="modula">Modula</option>
+        <option value="corchibi">Corchibi</option>
+      </select>
+      <button class="matrix-btn" id="markDeadBtn">Mark untyped as DEAD</button>
+      <button class="matrix-btn" id="resetMatrixBtn">Reset</button>
+      <span class="matrix-help" id="matrixHelp">
+        Type every key on your keyboard. Then click <b>Mark untyped as DEAD</b>
+        to highlight unresponsive keys and pin clusters.
+      </span>
+    </div>
+    <div id="matrixBody"></div>
   </div>
 </div>
 
@@ -576,6 +844,1364 @@ const state = {
   lastDown:   {},
 };
 const CHATTER_THRESHOLD_MS = 50;
+
+// ============= Keyboard presets (auto-generated by tools/parse_zmk.py) =============
+const PRESETS = {
+  modula: {
+  "name": "modula",
+  "pinsPerSide": 6,
+  "pinLabelsL": [
+    "D0",
+    "D1",
+    "D2",
+    "D3",
+    "P0.09",
+    "P0.10"
+  ],
+  "pinLabelsR": [
+    "D0",
+    "D1",
+    "D2",
+    "D3",
+    "P0.09",
+    "P0.10"
+  ],
+  "positions": [
+    {
+      "idx": 0,
+      "side": "L",
+      "driver": 1,
+      "sensor": 0,
+      "expected": "tab",
+      "label": "&lth \u2026 TAB",
+      "testable": true,
+      "binding": "&lth FCN TAB"
+    },
+    {
+      "idx": 1,
+      "side": "L",
+      "driver": 2,
+      "sensor": 0,
+      "expected": "q",
+      "label": "&plt \u2026 Q",
+      "testable": true,
+      "binding": "&plt FCN Q"
+    },
+    {
+      "idx": 2,
+      "side": "L",
+      "driver": 3,
+      "sensor": 0,
+      "expected": "w",
+      "label": "W",
+      "testable": true,
+      "binding": "&kp W"
+    },
+    {
+      "idx": 3,
+      "side": "L",
+      "driver": 4,
+      "sensor": 0,
+      "expected": "e",
+      "label": "E",
+      "testable": true,
+      "binding": "&kp E"
+    },
+    {
+      "idx": 4,
+      "side": "L",
+      "driver": 5,
+      "sensor": 0,
+      "expected": "r",
+      "label": "R",
+      "testable": true,
+      "binding": "&kp R"
+    },
+    {
+      "idx": 5,
+      "side": "L",
+      "driver": 2,
+      "sensor": 1,
+      "expected": "t",
+      "label": "T",
+      "testable": true,
+      "binding": "&kp T"
+    },
+    {
+      "idx": 6,
+      "side": "R",
+      "driver": 1,
+      "sensor": 0,
+      "expected": "y",
+      "label": "Y",
+      "testable": true,
+      "binding": "&kp Y"
+    },
+    {
+      "idx": 7,
+      "side": "R",
+      "driver": 2,
+      "sensor": 0,
+      "expected": "u",
+      "label": "U",
+      "testable": true,
+      "binding": "&kp U"
+    },
+    {
+      "idx": 8,
+      "side": "R",
+      "driver": 3,
+      "sensor": 0,
+      "expected": "i",
+      "label": "I",
+      "testable": true,
+      "binding": "&kp I"
+    },
+    {
+      "idx": 9,
+      "side": "R",
+      "driver": 4,
+      "sensor": 0,
+      "expected": "o",
+      "label": "O",
+      "testable": true,
+      "binding": "&kp O"
+    },
+    {
+      "idx": 10,
+      "side": "R",
+      "driver": 5,
+      "sensor": 0,
+      "expected": "p",
+      "label": "P",
+      "testable": true,
+      "binding": "&kp P"
+    },
+    {
+      "idx": 11,
+      "side": "R",
+      "driver": 2,
+      "sensor": 1,
+      "expected": "hyphen",
+      "label": "minus",
+      "testable": true,
+      "binding": "&minus"
+    },
+    {
+      "idx": 12,
+      "side": "L",
+      "driver": 0,
+      "sensor": 2,
+      "expected": "return_or_enter",
+      "label": "&mth \u2026 RET",
+      "testable": true,
+      "binding": "&mth LCTRL RET"
+    },
+    {
+      "idx": 13,
+      "side": "L",
+      "driver": 1,
+      "sensor": 2,
+      "expected": "a",
+      "label": "A",
+      "testable": true,
+      "binding": "&kp A"
+    },
+    {
+      "idx": 14,
+      "side": "L",
+      "driver": 3,
+      "sensor": 2,
+      "expected": "s",
+      "label": "S",
+      "testable": true,
+      "binding": "&kp S"
+    },
+    {
+      "idx": 15,
+      "side": "L",
+      "driver": 4,
+      "sensor": 2,
+      "expected": "d",
+      "label": "D",
+      "testable": true,
+      "binding": "&kp D"
+    },
+    {
+      "idx": 16,
+      "side": "L",
+      "driver": 5,
+      "sensor": 2,
+      "expected": "f",
+      "label": "F",
+      "testable": true,
+      "binding": "&kp F"
+    },
+    {
+      "idx": 17,
+      "side": "L",
+      "driver": 3,
+      "sensor": 1,
+      "expected": "g",
+      "label": "G",
+      "testable": true,
+      "binding": "&kp G"
+    },
+    {
+      "idx": 18,
+      "side": "R",
+      "driver": 0,
+      "sensor": 2,
+      "expected": "h",
+      "label": "H",
+      "testable": true,
+      "binding": "&kp H"
+    },
+    {
+      "idx": 19,
+      "side": "R",
+      "driver": 1,
+      "sensor": 2,
+      "expected": "j",
+      "label": "J",
+      "testable": true,
+      "binding": "&kp J"
+    },
+    {
+      "idx": 20,
+      "side": "R",
+      "driver": 3,
+      "sensor": 2,
+      "expected": "k",
+      "label": "K",
+      "testable": true,
+      "binding": "&kp K"
+    },
+    {
+      "idx": 21,
+      "side": "R",
+      "driver": 4,
+      "sensor": 2,
+      "expected": "l",
+      "label": "L",
+      "testable": true,
+      "binding": "&kp L"
+    },
+    {
+      "idx": 22,
+      "side": "R",
+      "driver": 5,
+      "sensor": 2,
+      "expected": "semicolon",
+      "label": "semi",
+      "testable": true,
+      "binding": "&semi"
+    },
+    {
+      "idx": 23,
+      "side": "R",
+      "driver": 3,
+      "sensor": 1,
+      "expected": "7",
+      "label": "sqt",
+      "testable": true,
+      "binding": "&sqt"
+    },
+    {
+      "idx": 24,
+      "side": "L",
+      "driver": 0,
+      "sensor": 3,
+      "expected": "escape",
+      "label": "&mth \u2026 ESC",
+      "testable": true,
+      "binding": "&mth LSHIFT ESC"
+    },
+    {
+      "idx": 25,
+      "side": "L",
+      "driver": 1,
+      "sensor": 3,
+      "expected": "z",
+      "label": "Z",
+      "testable": true,
+      "binding": "&kp Z"
+    },
+    {
+      "idx": 26,
+      "side": "L",
+      "driver": 2,
+      "sensor": 3,
+      "expected": "x",
+      "label": "X",
+      "testable": true,
+      "binding": "&kp X"
+    },
+    {
+      "idx": 27,
+      "side": "L",
+      "driver": 4,
+      "sensor": 3,
+      "expected": "c",
+      "label": "C",
+      "testable": true,
+      "binding": "&kp C"
+    },
+    {
+      "idx": 28,
+      "side": "L",
+      "driver": 5,
+      "sensor": 3,
+      "expected": "v",
+      "label": "V",
+      "testable": true,
+      "binding": "&kp V"
+    },
+    {
+      "idx": 29,
+      "side": "L",
+      "driver": 4,
+      "sensor": 1,
+      "expected": "b",
+      "label": "B",
+      "testable": true,
+      "binding": "&kp B"
+    },
+    {
+      "idx": 30,
+      "side": "R",
+      "driver": 0,
+      "sensor": 3,
+      "expected": "n",
+      "label": "N",
+      "testable": true,
+      "binding": "&kp N"
+    },
+    {
+      "idx": 31,
+      "side": "R",
+      "driver": 1,
+      "sensor": 3,
+      "expected": "m",
+      "label": "M",
+      "testable": true,
+      "binding": "&kp M"
+    },
+    {
+      "idx": 32,
+      "side": "R",
+      "driver": 2,
+      "sensor": 3,
+      "expected": "comma",
+      "label": "COMMA",
+      "testable": true,
+      "binding": "&kp COMMA"
+    },
+    {
+      "idx": 33,
+      "side": "R",
+      "driver": 4,
+      "sensor": 3,
+      "expected": "period",
+      "label": "DOT",
+      "testable": true,
+      "binding": "&kp DOT"
+    },
+    {
+      "idx": 34,
+      "side": "R",
+      "driver": 5,
+      "sensor": 3,
+      "expected": "slash",
+      "label": "SLASH",
+      "testable": true,
+      "binding": "&kp SLASH"
+    },
+    {
+      "idx": 35,
+      "side": "R",
+      "driver": 4,
+      "sensor": 1,
+      "expected": "left_command",
+      "label": "LGUI",
+      "testable": true,
+      "binding": "&kp LGUI"
+    },
+    {
+      "idx": 36,
+      "side": "L",
+      "driver": 0,
+      "sensor": 4,
+      "expected": "escape",
+      "label": "ESC",
+      "testable": true,
+      "binding": "&kp ESC"
+    },
+    {
+      "idx": 37,
+      "side": "L",
+      "driver": 1,
+      "sensor": 4,
+      "expected": null,
+      "label": "\u25bd trans",
+      "testable": false,
+      "binding": "&trans"
+    },
+    {
+      "idx": 38,
+      "side": "L",
+      "driver": 2,
+      "sensor": 4,
+      "expected": null,
+      "label": "\u25bd trans",
+      "testable": false,
+      "binding": "&trans"
+    },
+    {
+      "idx": 39,
+      "side": "L",
+      "driver": 3,
+      "sensor": 4,
+      "expected": "spacebar",
+      "label": "&lth \u2026 SPACE",
+      "testable": true,
+      "binding": "&lth SYMBOL SPACE"
+    },
+    {
+      "idx": 40,
+      "side": "L",
+      "driver": 5,
+      "sensor": 4,
+      "expected": "delete_or_backspace",
+      "label": "&lth \u2026 BSPC",
+      "testable": true,
+      "binding": "&lth NAVNUM BSPC"
+    },
+    {
+      "idx": 41,
+      "side": "R",
+      "driver": 0,
+      "sensor": 4,
+      "expected": "left_option",
+      "label": "LALT",
+      "testable": true,
+      "binding": "&kp LALT"
+    },
+    {
+      "idx": 42,
+      "side": "R",
+      "driver": 1,
+      "sensor": 4,
+      "expected": "return_or_enter",
+      "label": "&mt \u2026 RET",
+      "testable": true,
+      "binding": "&mt LSHFT RET"
+    },
+    {
+      "idx": 43,
+      "side": "R",
+      "driver": 2,
+      "sensor": 4,
+      "expected": null,
+      "label": "tog MOUSE",
+      "testable": false,
+      "binding": "&tog MOUSE"
+    },
+    {
+      "idx": 44,
+      "side": "R",
+      "driver": 3,
+      "sensor": 4,
+      "expected": null,
+      "label": "\u25bd trans",
+      "testable": false,
+      "binding": "&trans"
+    },
+    {
+      "idx": 45,
+      "side": "R",
+      "driver": 5,
+      "sensor": 4,
+      "expected": null,
+      "label": "tog SYMBOL",
+      "testable": false,
+      "binding": "&tog SYMBOL"
+    },
+    {
+      "idx": 46,
+      "side": "L",
+      "driver": 3,
+      "sensor": 5,
+      "expected": null,
+      "label": "mb4_alt_gui_n",
+      "testable": false,
+      "binding": "&mb4_alt_gui_n"
+    },
+    {
+      "idx": 47,
+      "side": "L",
+      "driver": 2,
+      "sensor": 5,
+      "expected": null,
+      "label": "\u2b14 scroll",
+      "testable": false,
+      "binding": "&msc SCUP_S"
+    },
+    {
+      "idx": 48,
+      "side": "L",
+      "driver": 4,
+      "sensor": 5,
+      "expected": "print_screen",
+      "label": "PSCRN",
+      "testable": true,
+      "binding": "&kp PSCRN"
+    },
+    {
+      "idx": 49,
+      "side": "L",
+      "driver": 1,
+      "sensor": 5,
+      "expected": null,
+      "label": "\u2b14 scroll",
+      "testable": false,
+      "binding": "&msc SCDN_S"
+    },
+    {
+      "idx": 50,
+      "side": "L",
+      "driver": 0,
+      "sensor": 5,
+      "expected": null,
+      "label": "mb5_alt_gui_p",
+      "testable": false,
+      "binding": "&mb5_alt_gui_p"
+    },
+    {
+      "idx": 51,
+      "side": "R",
+      "driver": 2,
+      "sensor": 5,
+      "expected": "left_arrow",
+      "label": "LEFT",
+      "testable": true,
+      "binding": "&kp LEFT"
+    },
+    {
+      "idx": 52,
+      "side": "R",
+      "driver": 0,
+      "sensor": 5,
+      "expected": "up_arrow",
+      "label": "UP",
+      "testable": true,
+      "binding": "&kp UP"
+    },
+    {
+      "idx": 53,
+      "side": "R",
+      "driver": 4,
+      "sensor": 5,
+      "expected": "mute",
+      "label": "C_MUTE",
+      "testable": true,
+      "binding": "&kp C_MUTE"
+    },
+    {
+      "idx": 54,
+      "side": "R",
+      "driver": 3,
+      "sensor": 5,
+      "expected": "down_arrow",
+      "label": "DOWN",
+      "testable": true,
+      "binding": "&kp DOWN"
+    },
+    {
+      "idx": 55,
+      "side": "R",
+      "driver": 1,
+      "sensor": 5,
+      "expected": "right_arrow",
+      "label": "RIGHT",
+      "testable": true,
+      "binding": "&kp RIGHT"
+    },
+    {
+      "idx": 56,
+      "side": "direct",
+      "sub_side": "L",
+      "driver": 6,
+      "sensor": 0,
+      "expected": "mute",
+      "label": "C_MUTE",
+      "testable": true,
+      "binding": "&kp C_MUTE"
+    },
+    {
+      "idx": 57,
+      "side": "direct",
+      "sub_side": "R",
+      "driver": 6,
+      "sensor": 0,
+      "expected": "end",
+      "label": "END",
+      "testable": true,
+      "binding": "&kp END"
+    }
+  ]
+},
+  corchibi: {
+  "name": "corchibi",
+  "pinsPerSide": 6,
+  "pinLabelsL": [
+    "D1",
+    "D2",
+    "D3",
+    "D6",
+    "D10",
+    "D9"
+  ],
+  "pinLabelsR": [
+    "D1",
+    "D2",
+    "D3",
+    "D6",
+    "D10",
+    "D9"
+  ],
+  "positions": [
+    {
+      "idx": 0,
+      "side": "L",
+      "driver": 0,
+      "sensor": 1,
+      "expected": "escape",
+      "label": "ESC",
+      "testable": true,
+      "binding": "&kp ESC"
+    },
+    {
+      "idx": 1,
+      "side": "L",
+      "driver": 0,
+      "sensor": 2,
+      "expected": "tab",
+      "label": "TAB",
+      "testable": true,
+      "binding": "&kp TAB"
+    },
+    {
+      "idx": 2,
+      "side": "L",
+      "driver": 0,
+      "sensor": 3,
+      "expected": "left_shift",
+      "label": "LSHFT",
+      "testable": true,
+      "binding": "&kp LSHFT"
+    },
+    {
+      "idx": 3,
+      "side": "L",
+      "driver": 0,
+      "sensor": 4,
+      "expected": "left_control",
+      "label": "LCTRL",
+      "testable": true,
+      "binding": "&kp LCTRL"
+    },
+    {
+      "idx": 4,
+      "side": "L",
+      "driver": 1,
+      "sensor": 0,
+      "expected": "a",
+      "label": "A",
+      "testable": true,
+      "binding": "&kp A"
+    },
+    {
+      "idx": 5,
+      "side": "L",
+      "driver": 1,
+      "sensor": 2,
+      "expected": "z",
+      "label": "Z",
+      "testable": true,
+      "binding": "&kp Z"
+    },
+    {
+      "idx": 6,
+      "side": "L",
+      "driver": 1,
+      "sensor": 3,
+      "expected": "left_command",
+      "label": "LGUI",
+      "testable": true,
+      "binding": "&kp LGUI"
+    },
+    {
+      "idx": 7,
+      "side": "L",
+      "driver": 1,
+      "sensor": 4,
+      "expected": "w",
+      "label": "W",
+      "testable": true,
+      "binding": "&kp W"
+    },
+    {
+      "idx": 8,
+      "side": "L",
+      "driver": 2,
+      "sensor": 0,
+      "expected": "x",
+      "label": "X",
+      "testable": true,
+      "binding": "&kp X"
+    },
+    {
+      "idx": 9,
+      "side": "L",
+      "driver": 2,
+      "sensor": 1,
+      "expected": "left_option",
+      "label": "LALT",
+      "testable": true,
+      "binding": "&kp LALT"
+    },
+    {
+      "idx": 10,
+      "side": "L",
+      "driver": 2,
+      "sensor": 3,
+      "expected": "e",
+      "label": "E",
+      "testable": true,
+      "binding": "&kp E"
+    },
+    {
+      "idx": 11,
+      "side": "L",
+      "driver": 2,
+      "sensor": 4,
+      "expected": "d",
+      "label": "D",
+      "testable": true,
+      "binding": "&kp D"
+    },
+    {
+      "idx": 12,
+      "side": "L",
+      "driver": 3,
+      "sensor": 0,
+      "expected": "r",
+      "label": "R",
+      "testable": true,
+      "binding": "&kp R"
+    },
+    {
+      "idx": 13,
+      "side": "L",
+      "driver": 3,
+      "sensor": 1,
+      "expected": "f",
+      "label": "F",
+      "testable": true,
+      "binding": "&kp F"
+    },
+    {
+      "idx": 14,
+      "side": "L",
+      "driver": 3,
+      "sensor": 2,
+      "expected": "v",
+      "label": "V",
+      "testable": true,
+      "binding": "&kp V"
+    },
+    {
+      "idx": 15,
+      "side": "L",
+      "driver": 3,
+      "sensor": 4,
+      "expected": null,
+      "label": "mo 1",
+      "testable": false,
+      "binding": "&mo 1"
+    },
+    {
+      "idx": 16,
+      "side": "L",
+      "driver": 4,
+      "sensor": 0,
+      "expected": "g",
+      "label": "G",
+      "testable": true,
+      "binding": "&kp G"
+    },
+    {
+      "idx": 17,
+      "side": "L",
+      "driver": 4,
+      "sensor": 1,
+      "expected": "b",
+      "label": "B",
+      "testable": true,
+      "binding": "&kp B"
+    },
+    {
+      "idx": 18,
+      "side": "L",
+      "driver": 4,
+      "sensor": 2,
+      "expected": null,
+      "label": "mo 2",
+      "testable": false,
+      "binding": "&mo 2"
+    },
+    {
+      "idx": 19,
+      "side": "L",
+      "driver": 4,
+      "sensor": 3,
+      "expected": "9",
+      "label": "N9",
+      "testable": true,
+      "binding": "&kp N9"
+    },
+    {
+      "idx": 20,
+      "side": "L",
+      "driver": 0,
+      "sensor": 5,
+      "expected": "q",
+      "label": "Q",
+      "testable": true,
+      "binding": "&kp Q"
+    },
+    {
+      "idx": 21,
+      "side": "L",
+      "driver": 1,
+      "sensor": 5,
+      "expected": "s",
+      "label": "S",
+      "testable": true,
+      "binding": "&kp S"
+    },
+    {
+      "idx": 22,
+      "side": "L",
+      "driver": 2,
+      "sensor": 5,
+      "expected": "c",
+      "label": "C",
+      "testable": true,
+      "binding": "&kp C"
+    },
+    {
+      "idx": 23,
+      "side": "L",
+      "driver": 3,
+      "sensor": 5,
+      "expected": "t",
+      "label": "T",
+      "testable": true,
+      "binding": "&kp T"
+    },
+    {
+      "idx": 24,
+      "side": "L",
+      "driver": 4,
+      "sensor": 5,
+      "expected": "spacebar",
+      "label": "SPACE",
+      "testable": true,
+      "binding": "&kp SPACE"
+    },
+    {
+      "idx": 25,
+      "side": "R",
+      "driver": 0,
+      "sensor": 1,
+      "expected": "delete_or_backspace",
+      "label": "BSPC",
+      "testable": true,
+      "binding": "&kp BSPC"
+    },
+    {
+      "idx": 26,
+      "side": "R",
+      "driver": 0,
+      "sensor": 2,
+      "expected": "return_or_enter",
+      "label": "RET",
+      "testable": true,
+      "binding": "&kp RET"
+    },
+    {
+      "idx": 27,
+      "side": "R",
+      "driver": 0,
+      "sensor": 3,
+      "expected": "slash",
+      "label": "QMARK",
+      "testable": true,
+      "binding": "&kp QMARK"
+    },
+    {
+      "idx": 28,
+      "side": "R",
+      "driver": 0,
+      "sensor": 4,
+      "expected": "right_arrow",
+      "label": "RIGHT",
+      "testable": true,
+      "binding": "&kp RIGHT"
+    },
+    {
+      "idx": 29,
+      "side": "R",
+      "driver": 1,
+      "sensor": 0,
+      "expected": "semicolon",
+      "label": "COLON",
+      "testable": true,
+      "binding": "&kp COLON"
+    },
+    {
+      "idx": 30,
+      "side": "R",
+      "driver": 1,
+      "sensor": 2,
+      "expected": "up_arrow",
+      "label": "UP",
+      "testable": true,
+      "binding": "&kp UP"
+    },
+    {
+      "idx": 31,
+      "side": "R",
+      "driver": 1,
+      "sensor": 3,
+      "expected": "down_arrow",
+      "label": "DOWN",
+      "testable": true,
+      "binding": "&kp DOWN"
+    },
+    {
+      "idx": 32,
+      "side": "R",
+      "driver": 1,
+      "sensor": 4,
+      "expected": "o",
+      "label": "O",
+      "testable": true,
+      "binding": "&kp O"
+    },
+    {
+      "idx": 33,
+      "side": "R",
+      "driver": 2,
+      "sensor": 0,
+      "expected": "period",
+      "label": "DOT",
+      "testable": true,
+      "binding": "&kp DOT"
+    },
+    {
+      "idx": 34,
+      "side": "R",
+      "driver": 2,
+      "sensor": 1,
+      "expected": "right_arrow",
+      "label": "RIGHT",
+      "testable": true,
+      "binding": "&kp RIGHT"
+    },
+    {
+      "idx": 35,
+      "side": "R",
+      "driver": 2,
+      "sensor": 3,
+      "expected": "i",
+      "label": "&lt \u2026 I",
+      "testable": true,
+      "binding": "&lt 5 I"
+    },
+    {
+      "idx": 36,
+      "side": "R",
+      "driver": 2,
+      "sensor": 4,
+      "expected": "k",
+      "label": "K",
+      "testable": true,
+      "binding": "&kp K"
+    },
+    {
+      "idx": 37,
+      "side": "R",
+      "driver": 3,
+      "sensor": 0,
+      "expected": "u",
+      "label": "U",
+      "testable": true,
+      "binding": "&kp U"
+    },
+    {
+      "idx": 38,
+      "side": "R",
+      "driver": 3,
+      "sensor": 1,
+      "expected": "j",
+      "label": "J",
+      "testable": true,
+      "binding": "&kp J"
+    },
+    {
+      "idx": 39,
+      "side": "R",
+      "driver": 3,
+      "sensor": 2,
+      "expected": "m",
+      "label": "M",
+      "testable": true,
+      "binding": "&kp M"
+    },
+    {
+      "idx": 40,
+      "side": "R",
+      "driver": 3,
+      "sensor": 4,
+      "expected": "a",
+      "label": "&lt \u2026 A",
+      "testable": true,
+      "binding": "&lt 5 A"
+    },
+    {
+      "idx": 41,
+      "side": "R",
+      "driver": 4,
+      "sensor": 0,
+      "expected": "h",
+      "label": "H",
+      "testable": true,
+      "binding": "&kp H"
+    },
+    {
+      "idx": 42,
+      "side": "R",
+      "driver": 4,
+      "sensor": 1,
+      "expected": "n",
+      "label": "N",
+      "testable": true,
+      "binding": "&kp N"
+    },
+    {
+      "idx": 43,
+      "side": "R",
+      "driver": 4,
+      "sensor": 2,
+      "expected": null,
+      "label": "mo 3",
+      "testable": false,
+      "binding": "&mo 3"
+    },
+    {
+      "idx": 44,
+      "side": "R",
+      "driver": 4,
+      "sensor": 3,
+      "expected": "8",
+      "label": "N8",
+      "testable": true,
+      "binding": "&kp N8"
+    },
+    {
+      "idx": 45,
+      "side": "R",
+      "driver": 0,
+      "sensor": 5,
+      "expected": "p",
+      "label": "P",
+      "testable": true,
+      "binding": "&kp P"
+    },
+    {
+      "idx": 46,
+      "side": "R",
+      "driver": 1,
+      "sensor": 5,
+      "expected": "l",
+      "label": "L",
+      "testable": true,
+      "binding": "&kp L"
+    },
+    {
+      "idx": 47,
+      "side": "R",
+      "driver": 2,
+      "sensor": 5,
+      "expected": "comma",
+      "label": "COMMA",
+      "testable": true,
+      "binding": "&kp COMMA"
+    },
+    {
+      "idx": 48,
+      "side": "R",
+      "driver": 3,
+      "sensor": 5,
+      "expected": "y",
+      "label": "Y",
+      "testable": true,
+      "binding": "&kp Y"
+    },
+    {
+      "idx": 49,
+      "side": "R",
+      "driver": 4,
+      "sensor": 5,
+      "expected": "spacebar",
+      "label": "SPACE",
+      "testable": true,
+      "binding": "&kp SPACE"
+    }
+  ]
+}
+};
+
+// ============= Matrix Diagnostic Mode =============
+const matrixState = {
+  active: false,
+  preset: null,        // current preset object
+  pressed: new Set(),  // set of position idx that fired
+  marked: false,       // true after "Mark untyped as DEAD"
+  highlightIdx: null,  // currently highlighted cell
+};
+
+function selectKeyboard(name) {
+  matrixState.preset = PRESETS[name] || null;
+  matrixState.pressed.clear();
+  matrixState.marked = false;
+  matrixState.highlightIdx = null;
+  renderMatrix();
+}
+
+function resetMatrix() {
+  matrixState.pressed.clear();
+  matrixState.marked = false;
+  matrixState.highlightIdx = null;
+  renderMatrix();
+}
+
+function markUntypedDead() {
+  matrixState.marked = true;
+  renderMatrix();
+}
+
+function setMatrixMode(on) {
+  matrixState.active = on;
+  document.getElementById('eventsView').classList.toggle('hidden', on);
+  document.getElementById('matrixView').classList.toggle('active', on);
+  if (on && !matrixState.preset) {
+    selectKeyboard(document.getElementById('kbSelect').value);
+  } else {
+    renderMatrix();
+  }
+}
+
+// On every keypress, mark matching positions as pressed.
+function matrixOnKeyEvent(direction, expected) {
+  if (!matrixState.active || !matrixState.preset) return;
+  if (direction !== 'down') return;
+  let changed = false;
+  for (const p of matrixState.preset.positions) {
+    if (p.testable && p.expected === expected && !matrixState.pressed.has(p.idx)) {
+      matrixState.pressed.add(p.idx);
+      changed = true;
+    }
+  }
+  if (changed) renderMatrix();
+}
+
+function classifyCell(p) {
+  if (!p.testable) return 'untestable';
+  if (matrixState.pressed.has(p.idx)) return 'pressed';
+  if (matrixState.marked) return 'dead';
+  return 'untested';
+}
+
+function renderMatrix() {
+  const body = document.getElementById('matrixBody');
+  const ps = matrixState.preset;
+  if (!ps) { body.innerHTML = ''; return; }
+
+  // Group positions by side
+  const sides = { L: [], R: [], direct: [] };
+  for (const p of ps.positions) sides[p.side].push(p);
+
+  let html = '';
+  for (const side of ['L', 'R']) {
+    const positions = sides[side];
+    if (positions.length === 0) continue;
+    html += `<div class="matrix-side">`;
+    html += `<div class="matrix-side-title">${side === 'L' ? 'Left' : 'Right'} side — charlieplex (driver × sensor)</div>`;
+    html += renderPinGrid(positions, side === 'L' ? ps.pinLabelsL : ps.pinLabelsR, side, ps.pinsPerSide);
+    html += `</div>`;
+  }
+  if (sides.direct.length > 0) {
+    html += `<div class="matrix-side">`;
+    html += `<div class="matrix-side-title">Direct kscan (single GPIO per side)</div>`;
+    html += `<div class="matrix-direct">`;
+    for (const p of sides.direct) {
+      const cls = classifyCell(p);
+      html += `<div class="pin-cell key ${cls}" data-idx="${p.idx}" title="${p.binding} · ${p.sub_side || ''}">
+        <div class="keylabel">${p.label}</div>
+        <div class="keymeta">${p.sub_side || ''} direct</div>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+  html += renderSummary();
+  body.innerHTML = html;
+
+  // Attach click handlers
+  body.querySelectorAll('.pin-cell.key').forEach(el => {
+    el.addEventListener('click', () => {
+      const idx = parseInt(el.dataset.idx, 10);
+      matrixState.highlightIdx =
+        matrixState.highlightIdx === idx ? null : idx;
+      renderMatrix();
+    });
+  });
+
+  // Apply highlight on related cells
+  if (matrixState.highlightIdx !== null) {
+    const target = ps.positions.find(p => p.idx === matrixState.highlightIdx);
+    if (target) {
+      body.querySelectorAll('.pin-cell.key').forEach(el => {
+        const idx = parseInt(el.dataset.idx, 10);
+        const p = ps.positions.find(pp => pp.idx === idx);
+        if (!p || p.side !== target.side) return;
+        if (idx === target.idx) el.classList.add('highlight-target');
+        else if (p.driver === target.driver) el.classList.add('highlight-row');
+        else if (p.sensor === target.sensor) el.classList.add('highlight-col');
+      });
+    }
+  }
+}
+
+function renderPinGrid(positions, pinLabels, side, pinsPerSide) {
+  const N = pinsPerSide;
+  const labels = pinLabels.length === N ? pinLabels :
+    Array.from({length: N}, (_, i) => `P${i}`);
+
+  // Build (driver,sensor) → position lookup
+  const at = {};
+  for (const p of positions) at[`${p.driver},${p.sensor}`] = p;
+
+  const cellSize = 60;
+  let html = `<div class="pin-grid" style="grid-template-columns: 50px repeat(${N}, ${cellSize}px);">`;
+
+  // header row
+  html += `<div class="pin-cell label-corner">d↓ / s→</div>`;
+  for (let s = 0; s < N; s++) {
+    html += `<div class="pin-cell label">s${s}<br><span style="font-size:8px;opacity:0.7">${labels[s]}</span></div>`;
+  }
+  // body rows
+  for (let d = 0; d < N; d++) {
+    html += `<div class="pin-cell label">d${d}<br><span style="font-size:8px;opacity:0.7">${labels[d]}</span></div>`;
+    for (let s = 0; s < N; s++) {
+      if (d === s) {
+        html += `<div class="pin-cell diagonal">─</div>`;
+        continue;
+      }
+      const p = at[`${d},${s}`];
+      if (!p) {
+        html += `<div class="pin-cell empty"></div>`;
+        continue;
+      }
+      const cls = classifyCell(p);
+      html += `<div class="pin-cell key ${cls}" data-idx="${p.idx}" title="${p.binding}">
+        <div class="keylabel">${p.label}</div>
+      </div>`;
+    }
+  }
+  html += `</div>`;
+  return html;
+}
+
+function renderSummary() {
+  const ps = matrixState.preset;
+  if (!ps) return '';
+  const testable = ps.positions.filter(p => p.testable);
+  const pressed = testable.filter(p => matrixState.pressed.has(p.idx));
+  const dead = matrixState.marked
+    ? testable.filter(p => !matrixState.pressed.has(p.idx))
+    : [];
+  const untouched = matrixState.marked ? 0 :
+    testable.length - pressed.length;
+
+  let html = `<div class="matrix-summary">`;
+  html += `<div class="matrix-summary-title">Status</div>`;
+  html += `<div class="matrix-stat">`;
+  html += `  <span><span class="stat-num stat-pressed">${pressed.length}</span> typed</span>`;
+  if (matrixState.marked) {
+    html += `  <span><span class="stat-num stat-dead">${dead.length}</span> dead</span>`;
+  } else {
+    html += `  <span><span class="stat-num stat-untouched">${untouched}</span> untyped</span>`;
+  }
+  html += `  <span style="color:var(--text-secondary);font-size:11px;">(${ps.positions.length - testable.length} untestable: trans / mo / mod-morphs)</span>`;
+  html += `</div>`;
+
+  if (matrixState.marked && dead.length > 0) {
+    // Cluster analysis
+    const byDriver = {};
+    const bySensor = {};
+    for (const p of dead) {
+      if (p.side === 'direct') continue;
+      const dk = `${p.side}:${p.driver}`;
+      const sk = `${p.side}:${p.sensor}`;
+      (byDriver[dk] ||= []).push(p);
+      (bySensor[sk] ||= []).push(p);
+    }
+    const clusters = [];
+    for (const [k, v] of Object.entries(byDriver)) {
+      if (v.length >= 2) {
+        const [side, di] = k.split(':');
+        const lab = (side === 'L' ? ps.pinLabelsL : ps.pinLabelsR)[parseInt(di)] || `P${di}`;
+        clusters.push(`<b>${v.length}</b> dead keys share <b>driver pin ${lab}</b> on ${side === 'L' ? 'LEFT' : 'RIGHT'} → check that pin's solder/trace`);
+      }
+    }
+    for (const [k, v] of Object.entries(bySensor)) {
+      if (v.length >= 2) {
+        const [side, si] = k.split(':');
+        const lab = (side === 'L' ? ps.pinLabelsL : ps.pinLabelsR)[parseInt(si)] || `P${si}`;
+        clusters.push(`<b>${v.length}</b> dead keys share <b>sensor pin ${lab}</b> on ${side === 'L' ? 'LEFT' : 'RIGHT'} → check that pin's solder/trace`);
+      }
+    }
+    if (clusters.length === 0) {
+      html += `<div class="matrix-insight info">Dead keys are scattered — likely individual switch / diode solder issues.</div>`;
+    } else {
+      for (const c of clusters) html += `<div class="matrix-insight">⚠ ${c}</div>`;
+    }
+    // List dead keys
+    html += `<div class="matrix-insight info" style="font-size:11px;">Dead positions: `;
+    html += dead.map(p => `${p.label} <code>${p.side}d${p.driver}s${p.sensor}</code>`).join(', ');
+    html += `</div>`;
+  } else if (matrixState.marked && dead.length === 0) {
+    html += `<div class="matrix-insight info">All testable keys responded ✓</div>`;
+  } else {
+    html += `<div class="matrix-insight info">Keep typing — pressed keys turn green. Click <b>Mark untyped as DEAD</b> when done.</div>`;
+  }
+  html += `</div>`;
+  return html;
+}
 
 // ============= Sound (Web Audio API) =============
 let audioCtx = null;
@@ -894,6 +2520,15 @@ function addEvent(evt) {
     if (empty) empty.remove();
   }
   soundForEvent(evt.direction);
+
+  // Forward to matrix diagnostic (parses key_code from label)
+  if (matrixState.active) {
+    const m = evt.label.match(/^\{"(?:key_code|pointing_button)":"([^"]+)"\}$/);
+    if (m) {
+      const expected = m[0].includes('pointing_button') ? `mouse:${evt.usage}` : m[1];
+      matrixOnKeyEvent(evt.direction, expected);
+    }
+  }
 }
 
 function appendRow(e) {
@@ -1055,6 +2690,23 @@ window.addEventListener('blur', () => {
   stopSynthAll();
   state.pressStart = {};
 });
+
+// Mode switcher
+document.getElementById('modeSwitcher').addEventListener('click', e => {
+  const btn = e.target.closest('.mode-btn');
+  if (!btn) return;
+  document.querySelectorAll('#modeSwitcher .mode-btn').forEach(b => {
+    b.classList.toggle('selected', b === btn);
+  });
+  setMatrixMode(btn.dataset.mode === 'matrix');
+});
+
+// Matrix controls
+document.getElementById('kbSelect').addEventListener('change', e => {
+  selectKeyboard(e.target.value);
+});
+document.getElementById('markDeadBtn').addEventListener('click', markUntypedDead);
+document.getElementById('resetMatrixBtn').addEventListener('click', resetMatrix);
 
 // initial render
 updateKnob();

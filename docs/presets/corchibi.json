@@ -1,0 +1,522 @@
+{
+  "name": "corchibi",
+  "pinsPerSide": 6,
+  "pinLabelsL": [
+    "D1",
+    "D2",
+    "D3",
+    "D6",
+    "D10",
+    "D9"
+  ],
+  "pinLabelsR": [
+    "D1",
+    "D2",
+    "D3",
+    "D6",
+    "D10",
+    "D9"
+  ],
+  "positions": [
+    {
+      "idx": 0,
+      "side": "L",
+      "driver": 0,
+      "sensor": 1,
+      "expected": "escape",
+      "label": "ESC",
+      "testable": true,
+      "binding": "&kp ESC"
+    },
+    {
+      "idx": 1,
+      "side": "L",
+      "driver": 0,
+      "sensor": 2,
+      "expected": "tab",
+      "label": "TAB",
+      "testable": true,
+      "binding": "&kp TAB"
+    },
+    {
+      "idx": 2,
+      "side": "L",
+      "driver": 0,
+      "sensor": 3,
+      "expected": "left_shift",
+      "label": "LSHFT",
+      "testable": true,
+      "binding": "&kp LSHFT"
+    },
+    {
+      "idx": 3,
+      "side": "L",
+      "driver": 0,
+      "sensor": 4,
+      "expected": "left_control",
+      "label": "LCTRL",
+      "testable": true,
+      "binding": "&kp LCTRL"
+    },
+    {
+      "idx": 4,
+      "side": "L",
+      "driver": 1,
+      "sensor": 0,
+      "expected": "a",
+      "label": "A",
+      "testable": true,
+      "binding": "&kp A"
+    },
+    {
+      "idx": 5,
+      "side": "L",
+      "driver": 1,
+      "sensor": 2,
+      "expected": "z",
+      "label": "Z",
+      "testable": true,
+      "binding": "&kp Z"
+    },
+    {
+      "idx": 6,
+      "side": "L",
+      "driver": 1,
+      "sensor": 3,
+      "expected": "left_command",
+      "label": "LGUI",
+      "testable": true,
+      "binding": "&kp LGUI"
+    },
+    {
+      "idx": 7,
+      "side": "L",
+      "driver": 1,
+      "sensor": 4,
+      "expected": "w",
+      "label": "W",
+      "testable": true,
+      "binding": "&kp W"
+    },
+    {
+      "idx": 8,
+      "side": "L",
+      "driver": 2,
+      "sensor": 0,
+      "expected": "x",
+      "label": "X",
+      "testable": true,
+      "binding": "&kp X"
+    },
+    {
+      "idx": 9,
+      "side": "L",
+      "driver": 2,
+      "sensor": 1,
+      "expected": "left_option",
+      "label": "LALT",
+      "testable": true,
+      "binding": "&kp LALT"
+    },
+    {
+      "idx": 10,
+      "side": "L",
+      "driver": 2,
+      "sensor": 3,
+      "expected": "e",
+      "label": "E",
+      "testable": true,
+      "binding": "&kp E"
+    },
+    {
+      "idx": 11,
+      "side": "L",
+      "driver": 2,
+      "sensor": 4,
+      "expected": "d",
+      "label": "D",
+      "testable": true,
+      "binding": "&kp D"
+    },
+    {
+      "idx": 12,
+      "side": "L",
+      "driver": 3,
+      "sensor": 0,
+      "expected": "r",
+      "label": "R",
+      "testable": true,
+      "binding": "&kp R"
+    },
+    {
+      "idx": 13,
+      "side": "L",
+      "driver": 3,
+      "sensor": 1,
+      "expected": "f",
+      "label": "F",
+      "testable": true,
+      "binding": "&kp F"
+    },
+    {
+      "idx": 14,
+      "side": "L",
+      "driver": 3,
+      "sensor": 2,
+      "expected": "v",
+      "label": "V",
+      "testable": true,
+      "binding": "&kp V"
+    },
+    {
+      "idx": 15,
+      "side": "L",
+      "driver": 3,
+      "sensor": 4,
+      "expected": null,
+      "label": "mo 1",
+      "testable": false,
+      "binding": "&mo 1"
+    },
+    {
+      "idx": 16,
+      "side": "L",
+      "driver": 4,
+      "sensor": 0,
+      "expected": "g",
+      "label": "G",
+      "testable": true,
+      "binding": "&kp G"
+    },
+    {
+      "idx": 17,
+      "side": "L",
+      "driver": 4,
+      "sensor": 1,
+      "expected": "b",
+      "label": "B",
+      "testable": true,
+      "binding": "&kp B"
+    },
+    {
+      "idx": 18,
+      "side": "L",
+      "driver": 4,
+      "sensor": 2,
+      "expected": null,
+      "label": "mo 2",
+      "testable": false,
+      "binding": "&mo 2"
+    },
+    {
+      "idx": 19,
+      "side": "L",
+      "driver": 4,
+      "sensor": 3,
+      "expected": "9",
+      "label": "N9",
+      "testable": true,
+      "binding": "&kp N9"
+    },
+    {
+      "idx": 20,
+      "side": "L",
+      "driver": 0,
+      "sensor": 5,
+      "expected": "q",
+      "label": "Q",
+      "testable": true,
+      "binding": "&kp Q"
+    },
+    {
+      "idx": 21,
+      "side": "L",
+      "driver": 1,
+      "sensor": 5,
+      "expected": "s",
+      "label": "S",
+      "testable": true,
+      "binding": "&kp S"
+    },
+    {
+      "idx": 22,
+      "side": "L",
+      "driver": 2,
+      "sensor": 5,
+      "expected": "c",
+      "label": "C",
+      "testable": true,
+      "binding": "&kp C"
+    },
+    {
+      "idx": 23,
+      "side": "L",
+      "driver": 3,
+      "sensor": 5,
+      "expected": "t",
+      "label": "T",
+      "testable": true,
+      "binding": "&kp T"
+    },
+    {
+      "idx": 24,
+      "side": "L",
+      "driver": 4,
+      "sensor": 5,
+      "expected": "spacebar",
+      "label": "SPACE",
+      "testable": true,
+      "binding": "&kp SPACE"
+    },
+    {
+      "idx": 25,
+      "side": "R",
+      "driver": 0,
+      "sensor": 1,
+      "expected": "delete_or_backspace",
+      "label": "BSPC",
+      "testable": true,
+      "binding": "&kp BSPC"
+    },
+    {
+      "idx": 26,
+      "side": "R",
+      "driver": 0,
+      "sensor": 2,
+      "expected": "return_or_enter",
+      "label": "RET",
+      "testable": true,
+      "binding": "&kp RET"
+    },
+    {
+      "idx": 27,
+      "side": "R",
+      "driver": 0,
+      "sensor": 3,
+      "expected": "slash",
+      "label": "QMARK",
+      "testable": true,
+      "binding": "&kp QMARK"
+    },
+    {
+      "idx": 28,
+      "side": "R",
+      "driver": 0,
+      "sensor": 4,
+      "expected": "right_arrow",
+      "label": "RIGHT",
+      "testable": true,
+      "binding": "&kp RIGHT"
+    },
+    {
+      "idx": 29,
+      "side": "R",
+      "driver": 1,
+      "sensor": 0,
+      "expected": "semicolon",
+      "label": "COLON",
+      "testable": true,
+      "binding": "&kp COLON"
+    },
+    {
+      "idx": 30,
+      "side": "R",
+      "driver": 1,
+      "sensor": 2,
+      "expected": "up_arrow",
+      "label": "UP",
+      "testable": true,
+      "binding": "&kp UP"
+    },
+    {
+      "idx": 31,
+      "side": "R",
+      "driver": 1,
+      "sensor": 3,
+      "expected": "down_arrow",
+      "label": "DOWN",
+      "testable": true,
+      "binding": "&kp DOWN"
+    },
+    {
+      "idx": 32,
+      "side": "R",
+      "driver": 1,
+      "sensor": 4,
+      "expected": "o",
+      "label": "O",
+      "testable": true,
+      "binding": "&kp O"
+    },
+    {
+      "idx": 33,
+      "side": "R",
+      "driver": 2,
+      "sensor": 0,
+      "expected": "period",
+      "label": "DOT",
+      "testable": true,
+      "binding": "&kp DOT"
+    },
+    {
+      "idx": 34,
+      "side": "R",
+      "driver": 2,
+      "sensor": 1,
+      "expected": "right_arrow",
+      "label": "RIGHT",
+      "testable": true,
+      "binding": "&kp RIGHT"
+    },
+    {
+      "idx": 35,
+      "side": "R",
+      "driver": 2,
+      "sensor": 3,
+      "expected": "i",
+      "label": "&lt … I",
+      "testable": true,
+      "binding": "&lt 5 I"
+    },
+    {
+      "idx": 36,
+      "side": "R",
+      "driver": 2,
+      "sensor": 4,
+      "expected": "k",
+      "label": "K",
+      "testable": true,
+      "binding": "&kp K"
+    },
+    {
+      "idx": 37,
+      "side": "R",
+      "driver": 3,
+      "sensor": 0,
+      "expected": "u",
+      "label": "U",
+      "testable": true,
+      "binding": "&kp U"
+    },
+    {
+      "idx": 38,
+      "side": "R",
+      "driver": 3,
+      "sensor": 1,
+      "expected": "j",
+      "label": "J",
+      "testable": true,
+      "binding": "&kp J"
+    },
+    {
+      "idx": 39,
+      "side": "R",
+      "driver": 3,
+      "sensor": 2,
+      "expected": "m",
+      "label": "M",
+      "testable": true,
+      "binding": "&kp M"
+    },
+    {
+      "idx": 40,
+      "side": "R",
+      "driver": 3,
+      "sensor": 4,
+      "expected": "a",
+      "label": "&lt … A",
+      "testable": true,
+      "binding": "&lt 5 A"
+    },
+    {
+      "idx": 41,
+      "side": "R",
+      "driver": 4,
+      "sensor": 0,
+      "expected": "h",
+      "label": "H",
+      "testable": true,
+      "binding": "&kp H"
+    },
+    {
+      "idx": 42,
+      "side": "R",
+      "driver": 4,
+      "sensor": 1,
+      "expected": "n",
+      "label": "N",
+      "testable": true,
+      "binding": "&kp N"
+    },
+    {
+      "idx": 43,
+      "side": "R",
+      "driver": 4,
+      "sensor": 2,
+      "expected": null,
+      "label": "mo 3",
+      "testable": false,
+      "binding": "&mo 3"
+    },
+    {
+      "idx": 44,
+      "side": "R",
+      "driver": 4,
+      "sensor": 3,
+      "expected": "8",
+      "label": "N8",
+      "testable": true,
+      "binding": "&kp N8"
+    },
+    {
+      "idx": 45,
+      "side": "R",
+      "driver": 0,
+      "sensor": 5,
+      "expected": "p",
+      "label": "P",
+      "testable": true,
+      "binding": "&kp P"
+    },
+    {
+      "idx": 46,
+      "side": "R",
+      "driver": 1,
+      "sensor": 5,
+      "expected": "l",
+      "label": "L",
+      "testable": true,
+      "binding": "&kp L"
+    },
+    {
+      "idx": 47,
+      "side": "R",
+      "driver": 2,
+      "sensor": 5,
+      "expected": "comma",
+      "label": "COMMA",
+      "testable": true,
+      "binding": "&kp COMMA"
+    },
+    {
+      "idx": 48,
+      "side": "R",
+      "driver": 3,
+      "sensor": 5,
+      "expected": "y",
+      "label": "Y",
+      "testable": true,
+      "binding": "&kp Y"
+    },
+    {
+      "idx": 49,
+      "side": "R",
+      "driver": 4,
+      "sensor": 5,
+      "expected": "spacebar",
+      "label": "SPACE",
+      "testable": true,
+      "binding": "&kp SPACE"
+    }
+  ]
+}
