@@ -564,6 +564,145 @@
     border: 1px solid var(--divider);
   }
 
+  /* ============= Physical layout (keymap-drawer style) ============= */
+  .layout-wrap {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid var(--divider);
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .layout-svg {
+    display: block;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    height: auto;
+  }
+  .layout-key rect.outer {
+    fill: rgba(255,255,255,0.02);
+    stroke: rgba(255,255,255,0.10);
+    stroke-width: 0.8;
+  }
+  .layout-key rect.inner {
+    fill: rgba(125,128,144,0.10);
+    stroke: rgba(255,255,255,0.10);
+    stroke-width: 0.8;
+    transition: fill 120ms, stroke 120ms;
+  }
+  .layout-key text {
+    fill: var(--text-primary);
+    font-family: ui-monospace, 'SF Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+    user-select: none;
+  }
+  .layout-key.untestable rect.inner {
+    fill: rgba(255,255,255,0.02);
+    stroke: rgba(255,255,255,0.06);
+  }
+  .layout-key.untestable text { fill: var(--text-secondary); font-style: italic; }
+  .layout-key.pressed rect.inner {
+    fill: rgba(91,255,139,0.22);
+    stroke: var(--down-green);
+  }
+  .layout-key.pressed text { fill: var(--down-green); }
+  .layout-key.dead rect.inner {
+    fill: rgba(255,95,95,0.25);
+    stroke: var(--peak-red);
+    stroke-width: 1.5;
+  }
+  .layout-key.dead text { fill: var(--peak-red); font-weight: 700; }
+  .layout-key.highlight-pin rect.inner {
+    stroke: var(--accent-cyan);
+    stroke-width: 1.8;
+  }
+  .layout-key.highlight-target rect.inner {
+    stroke: var(--accent-cyan);
+    stroke-width: 2.5;
+    filter: drop-shadow(0 0 6px rgba(91,209,255,0.6));
+  }
+  .layout-key { cursor: pointer; }
+
+  /* ============= Xiao BLE pin panel ============= */
+  .xiao-row {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .xiao-board {
+    background: linear-gradient(180deg, #2a3140 0%, #1a1f2e 100%);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 10px;
+    padding: 14px 18px 16px;
+    position: relative;
+    min-width: 200px;
+  }
+  .xiao-side-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .xiao-usbc {
+    width: 32px;
+    height: 14px;
+    background: linear-gradient(180deg, #555 0%, #2a2a2a 100%);
+    border-radius: 3px 3px 6px 6px;
+    margin: 0 auto 10px;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.5);
+  }
+  .xiao-pinlist {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .xiao-pin {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.03);
+    font-family: ui-monospace, 'SF Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 120ms;
+    border-left: 3px solid transparent;
+  }
+  .xiao-pin:hover { background: rgba(91,209,255,0.08); }
+  .xiao-pin .pinlabel {
+    font-weight: 700;
+    min-width: 40px;
+    color: var(--text-primary);
+  }
+  .xiao-pin .pin-count {
+    color: var(--text-secondary);
+    font-size: 10px;
+    margin-left: auto;
+  }
+  .xiao-pin.has-dead {
+    background: rgba(255,95,95,0.10);
+    border-left-color: var(--peak-red);
+  }
+  .xiao-pin.has-dead .pinlabel { color: var(--peak-red); }
+  .xiao-pin.has-dead .pin-count {
+    color: var(--peak-red);
+    font-weight: 700;
+  }
+  .xiao-pin.highlighted {
+    background: rgba(91,209,255,0.14);
+    border-left-color: var(--accent-cyan);
+  }
+
   .matrix-summary {
     margin-top: 14px;
     padding: 12px 14px;
@@ -713,8 +852,8 @@
     <div class="matrix-controls">
       <label>Keyboard:</label>
       <select class="kb-select" id="kbSelect">
-        <option value="modula">Modula</option>
         <option value="corchibi">Corchibi</option>
+        <option value="modula">Modula (grid view — layout WIP)</option>
       </select>
       <button class="matrix-btn" id="markDeadBtn">Mark untyped as DEAD</button>
       <button class="matrix-btn" id="resetMatrixBtn">Reset</button>
@@ -1479,7 +1618,12 @@ const PRESETS = {
       "expected": "escape",
       "label": "ESC",
       "testable": true,
-      "binding": "&kp ESC"
+      "binding": "&kp ESC",
+      "x": 28.0,
+      "y": 56.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 1,
@@ -1489,7 +1633,12 @@ const PRESETS = {
       "expected": "tab",
       "label": "TAB",
       "testable": true,
-      "binding": "&kp TAB"
+      "binding": "&kp TAB",
+      "x": 28.0,
+      "y": 112.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 2,
@@ -1499,7 +1648,12 @@ const PRESETS = {
       "expected": "left_shift",
       "label": "LSHFT",
       "testable": true,
-      "binding": "&kp LSHFT"
+      "binding": "&kp LSHFT",
+      "x": 28.0,
+      "y": 168.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 3,
@@ -1509,7 +1663,12 @@ const PRESETS = {
       "expected": "left_control",
       "label": "LCTRL",
       "testable": true,
-      "binding": "&kp LCTRL"
+      "binding": "&kp LCTRL",
+      "x": 28.0,
+      "y": 224.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 4,
@@ -1519,7 +1678,12 @@ const PRESETS = {
       "expected": "a",
       "label": "A",
       "testable": true,
-      "binding": "&kp A"
+      "binding": "&kp A",
+      "x": 84.0,
+      "y": 112.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 5,
@@ -1529,7 +1693,12 @@ const PRESETS = {
       "expected": "z",
       "label": "Z",
       "testable": true,
-      "binding": "&kp Z"
+      "binding": "&kp Z",
+      "x": 84.0,
+      "y": 168.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 6,
@@ -1539,7 +1708,12 @@ const PRESETS = {
       "expected": "left_command",
       "label": "LGUI",
       "testable": true,
-      "binding": "&kp LGUI"
+      "binding": "&kp LGUI",
+      "x": 84.0,
+      "y": 224.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 7,
@@ -1549,7 +1723,12 @@ const PRESETS = {
       "expected": "w",
       "label": "W",
       "testable": true,
-      "binding": "&kp W"
+      "binding": "&kp W",
+      "x": 140.0,
+      "y": 42.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 8,
@@ -1559,7 +1738,12 @@ const PRESETS = {
       "expected": "x",
       "label": "X",
       "testable": true,
-      "binding": "&kp X"
+      "binding": "&kp X",
+      "x": 140.0,
+      "y": 154.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 9,
@@ -1569,7 +1753,12 @@ const PRESETS = {
       "expected": "left_option",
       "label": "LALT",
       "testable": true,
-      "binding": "&kp LALT"
+      "binding": "&kp LALT",
+      "x": 140.0,
+      "y": 210.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 10,
@@ -1579,7 +1768,12 @@ const PRESETS = {
       "expected": "e",
       "label": "E",
       "testable": true,
-      "binding": "&kp E"
+      "binding": "&kp E",
+      "x": 196.0,
+      "y": 28.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 11,
@@ -1589,7 +1783,12 @@ const PRESETS = {
       "expected": "d",
       "label": "D",
       "testable": true,
-      "binding": "&kp D"
+      "binding": "&kp D",
+      "x": 196.0,
+      "y": 84.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 12,
@@ -1599,7 +1798,12 @@ const PRESETS = {
       "expected": "r",
       "label": "R",
       "testable": true,
-      "binding": "&kp R"
+      "binding": "&kp R",
+      "x": 252.0,
+      "y": 42.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 13,
@@ -1609,7 +1813,12 @@ const PRESETS = {
       "expected": "f",
       "label": "F",
       "testable": true,
-      "binding": "&kp F"
+      "binding": "&kp F",
+      "x": 252.0,
+      "y": 98.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 14,
@@ -1619,7 +1828,12 @@ const PRESETS = {
       "expected": "v",
       "label": "V",
       "testable": true,
-      "binding": "&kp V"
+      "binding": "&kp V",
+      "x": 252.0,
+      "y": 154.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 15,
@@ -1629,7 +1843,12 @@ const PRESETS = {
       "expected": null,
       "label": "mo 1",
       "testable": false,
-      "binding": "&mo 1"
+      "binding": "&mo 1",
+      "x": 224.0,
+      "y": 231.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 16,
@@ -1639,7 +1858,12 @@ const PRESETS = {
       "expected": "g",
       "label": "G",
       "testable": true,
-      "binding": "&kp G"
+      "binding": "&kp G",
+      "x": 308.0,
+      "y": 112.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 17,
@@ -1649,7 +1873,12 @@ const PRESETS = {
       "expected": "b",
       "label": "B",
       "testable": true,
-      "binding": "&kp B"
+      "binding": "&kp B",
+      "x": 308.0,
+      "y": 168.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 18,
@@ -1659,7 +1888,12 @@ const PRESETS = {
       "expected": null,
       "label": "mo 2",
       "testable": false,
-      "binding": "&mo 2"
+      "binding": "&mo 2",
+      "x": 286.0,
+      "y": 236.0,
+      "rot": 11.93,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 19,
@@ -1669,7 +1903,12 @@ const PRESETS = {
       "expected": "9",
       "label": "N9",
       "testable": true,
-      "binding": "&kp N9"
+      "binding": "&kp N9",
+      "x": 364.0,
+      "y": 154.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 20,
@@ -1679,7 +1918,12 @@ const PRESETS = {
       "expected": "q",
       "label": "Q",
       "testable": true,
-      "binding": "&kp Q"
+      "binding": "&kp Q",
+      "x": 84.0,
+      "y": 56.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 21,
@@ -1689,7 +1933,12 @@ const PRESETS = {
       "expected": "s",
       "label": "S",
       "testable": true,
-      "binding": "&kp S"
+      "binding": "&kp S",
+      "x": 140.0,
+      "y": 98.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 22,
@@ -1699,7 +1948,12 @@ const PRESETS = {
       "expected": "c",
       "label": "C",
       "testable": true,
-      "binding": "&kp C"
+      "binding": "&kp C",
+      "x": 196.0,
+      "y": 140.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 23,
@@ -1709,7 +1963,12 @@ const PRESETS = {
       "expected": "t",
       "label": "T",
       "testable": true,
-      "binding": "&kp T"
+      "binding": "&kp T",
+      "x": 308.0,
+      "y": 56.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 24,
@@ -1719,7 +1978,12 @@ const PRESETS = {
       "expected": "spacebar",
       "label": "SPACE",
       "testable": true,
-      "binding": "&kp SPACE"
+      "binding": "&kp SPACE",
+      "x": 345.0,
+      "y": 257.0,
+      "rot": 23.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 25,
@@ -1729,7 +1993,12 @@ const PRESETS = {
       "expected": "delete_or_backspace",
       "label": "BSPC",
       "testable": true,
-      "binding": "&kp BSPC"
+      "binding": "&kp BSPC",
+      "x": 868.0,
+      "y": 56.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 26,
@@ -1739,7 +2008,12 @@ const PRESETS = {
       "expected": "return_or_enter",
       "label": "RET",
       "testable": true,
-      "binding": "&kp RET"
+      "binding": "&kp RET",
+      "x": 868.0,
+      "y": 112.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 27,
@@ -1749,7 +2023,12 @@ const PRESETS = {
       "expected": "slash",
       "label": "QMARK",
       "testable": true,
-      "binding": "&kp QMARK"
+      "binding": "&kp QMARK",
+      "x": 868.0,
+      "y": 168.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 28,
@@ -1759,7 +2038,12 @@ const PRESETS = {
       "expected": "right_arrow",
       "label": "RIGHT",
       "testable": true,
-      "binding": "&kp RIGHT"
+      "binding": "&kp RIGHT",
+      "x": 868.0,
+      "y": 224.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 29,
@@ -1769,7 +2053,12 @@ const PRESETS = {
       "expected": "semicolon",
       "label": "COLON",
       "testable": true,
-      "binding": "&kp COLON"
+      "binding": "&kp COLON",
+      "x": 812.0,
+      "y": 112.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 30,
@@ -1779,7 +2068,12 @@ const PRESETS = {
       "expected": "up_arrow",
       "label": "UP",
       "testable": true,
-      "binding": "&kp UP"
+      "binding": "&kp UP",
+      "x": 812.0,
+      "y": 168.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 31,
@@ -1789,7 +2083,12 @@ const PRESETS = {
       "expected": "down_arrow",
       "label": "DOWN",
       "testable": true,
-      "binding": "&kp DOWN"
+      "binding": "&kp DOWN",
+      "x": 812.0,
+      "y": 224.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 32,
@@ -1799,7 +2098,12 @@ const PRESETS = {
       "expected": "o",
       "label": "O",
       "testable": true,
-      "binding": "&kp O"
+      "binding": "&kp O",
+      "x": 756.0,
+      "y": 42.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 33,
@@ -1809,7 +2113,12 @@ const PRESETS = {
       "expected": "period",
       "label": "DOT",
       "testable": true,
-      "binding": "&kp DOT"
+      "binding": "&kp DOT",
+      "x": 756.0,
+      "y": 154.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 34,
@@ -1819,7 +2128,12 @@ const PRESETS = {
       "expected": "right_arrow",
       "label": "RIGHT",
       "testable": true,
-      "binding": "&kp RIGHT"
+      "binding": "&kp RIGHT",
+      "x": 756.0,
+      "y": 210.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 35,
@@ -1829,7 +2143,12 @@ const PRESETS = {
       "expected": "i",
       "label": "&lt \u2026 I",
       "testable": true,
-      "binding": "&lt 5 I"
+      "binding": "&lt 5 I",
+      "x": 700.0,
+      "y": 28.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 36,
@@ -1839,7 +2158,12 @@ const PRESETS = {
       "expected": "k",
       "label": "K",
       "testable": true,
-      "binding": "&kp K"
+      "binding": "&kp K",
+      "x": 700.0,
+      "y": 84.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 37,
@@ -1849,7 +2173,12 @@ const PRESETS = {
       "expected": "u",
       "label": "U",
       "testable": true,
-      "binding": "&kp U"
+      "binding": "&kp U",
+      "x": 644.0,
+      "y": 42.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 38,
@@ -1859,7 +2188,12 @@ const PRESETS = {
       "expected": "j",
       "label": "J",
       "testable": true,
-      "binding": "&kp J"
+      "binding": "&kp J",
+      "x": 644.0,
+      "y": 98.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 39,
@@ -1869,7 +2203,12 @@ const PRESETS = {
       "expected": "m",
       "label": "M",
       "testable": true,
-      "binding": "&kp M"
+      "binding": "&kp M",
+      "x": 644.0,
+      "y": 154.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 40,
@@ -1879,7 +2218,12 @@ const PRESETS = {
       "expected": "a",
       "label": "&lt \u2026 A",
       "testable": true,
-      "binding": "&lt 5 A"
+      "binding": "&lt 5 A",
+      "x": 672.0,
+      "y": 231.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 41,
@@ -1889,7 +2233,12 @@ const PRESETS = {
       "expected": "h",
       "label": "H",
       "testable": true,
-      "binding": "&kp H"
+      "binding": "&kp H",
+      "x": 588.0,
+      "y": 112.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 42,
@@ -1899,7 +2248,12 @@ const PRESETS = {
       "expected": "n",
       "label": "N",
       "testable": true,
-      "binding": "&kp N"
+      "binding": "&kp N",
+      "x": 588.0,
+      "y": 168.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 43,
@@ -1909,7 +2263,12 @@ const PRESETS = {
       "expected": null,
       "label": "mo 3",
       "testable": false,
-      "binding": "&mo 3"
+      "binding": "&mo 3",
+      "x": 610.0,
+      "y": 236.0,
+      "rot": -11.93,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 44,
@@ -1919,7 +2278,12 @@ const PRESETS = {
       "expected": "8",
       "label": "N8",
       "testable": true,
-      "binding": "&kp N8"
+      "binding": "&kp N8",
+      "x": 532.0,
+      "y": 154.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 45,
@@ -1929,7 +2293,12 @@ const PRESETS = {
       "expected": "p",
       "label": "P",
       "testable": true,
-      "binding": "&kp P"
+      "binding": "&kp P",
+      "x": 812.0,
+      "y": 56.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 46,
@@ -1939,7 +2308,12 @@ const PRESETS = {
       "expected": "l",
       "label": "L",
       "testable": true,
-      "binding": "&kp L"
+      "binding": "&kp L",
+      "x": 756.0,
+      "y": 98.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 47,
@@ -1949,7 +2323,12 @@ const PRESETS = {
       "expected": "comma",
       "label": "COMMA",
       "testable": true,
-      "binding": "&kp COMMA"
+      "binding": "&kp COMMA",
+      "x": 700.0,
+      "y": 140.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 48,
@@ -1959,7 +2338,12 @@ const PRESETS = {
       "expected": "y",
       "label": "Y",
       "testable": true,
-      "binding": "&kp Y"
+      "binding": "&kp Y",
+      "x": 588.0,
+      "y": 56.0,
+      "rot": 0.0,
+      "w": 54,
+      "h": 54
     },
     {
       "idx": 49,
@@ -1969,9 +2353,20 @@ const PRESETS = {
       "expected": "spacebar",
       "label": "SPACE",
       "testable": true,
-      "binding": "&kp SPACE"
+      "binding": "&kp SPACE",
+      "x": 551.0,
+      "y": 257.0,
+      "rot": -23.0,
+      "w": 54,
+      "h": 54
     }
-  ]
+  ],
+  "layout": {
+    "minX": -2.0,
+    "maxX": 898.0,
+    "minY": -2.0,
+    "maxY": 287.0
+  }
 }
 };
 
@@ -1981,7 +2376,8 @@ const matrixState = {
   preset: null,        // current preset object
   pressed: new Set(),  // set of position idx that fired
   marked: false,       // true after "Mark untyped as DEAD"
-  highlightIdx: null,  // currently highlighted cell
+  highlightIdx: null,  // currently selected key
+  highlightPin: null,  // currently selected pin "side:idx"
 };
 
 function selectKeyboard(name) {
@@ -1989,6 +2385,7 @@ function selectKeyboard(name) {
   matrixState.pressed.clear();
   matrixState.marked = false;
   matrixState.highlightIdx = null;
+  matrixState.highlightPin = null;
   renderMatrix();
 }
 
@@ -1996,6 +2393,7 @@ function resetMatrix() {
   matrixState.pressed.clear();
   matrixState.marked = false;
   matrixState.highlightIdx = null;
+  matrixState.highlightPin = null;
   renderMatrix();
 }
 
@@ -2036,41 +2434,177 @@ function classifyCell(p) {
   return 'untested';
 }
 
+// ===== Pin incidence helpers =====
+// For charlieplex, every key uses 2 pins (driver and sensor). Diagnosis
+// asks "how many [dead] keys touch this pin?" — combining both roles.
+function pinIncidenceOf(positions) {
+  const out = { L: {}, R: {} };
+  for (const p of positions) {
+    if (p.side === 'direct' || !(p.side in out)) continue;
+    out[p.side][p.driver] = (out[p.side][p.driver] || 0) + 1;
+    if (p.sensor !== p.driver) {
+      out[p.side][p.sensor] = (out[p.side][p.sensor] || 0) + 1;
+    }
+  }
+  return out;
+}
+
 function renderMatrix() {
   const body = document.getElementById('matrixBody');
   const ps = matrixState.preset;
   if (!ps) { body.innerHTML = ''; return; }
 
-  // Group positions by side
-  const sides = { L: [], R: [], direct: [] };
-  for (const p of ps.positions) sides[p.side].push(p);
-
-  let html = '';
-  for (const side of ['L', 'R']) {
-    const positions = sides[side];
-    if (positions.length === 0) continue;
-    html += `<div class="matrix-side">`;
-    html += `<div class="matrix-side-title">${side === 'L' ? 'Left' : 'Right'} side — charlieplex (driver × sensor)</div>`;
-    html += renderPinGrid(positions, side === 'L' ? ps.pinLabelsL : ps.pinLabelsR, side, ps.pinsPerSide);
-    html += `</div>`;
+  // No layout coords → fall back to old grid (e.g., Modula until SVG provided)
+  if (!ps.layout) {
+    body.innerHTML = renderLegacyGridFallback(ps);
+    attachKeyClickHandlers(body);
+    return;
   }
-  if (sides.direct.length > 0) {
-    html += `<div class="matrix-side">`;
-    html += `<div class="matrix-side-title">Direct kscan (single GPIO per side)</div>`;
-    html += `<div class="matrix-direct">`;
-    for (const p of sides.direct) {
-      const cls = classifyCell(p);
-      html += `<div class="pin-cell key ${cls}" data-idx="${p.idx}" title="${p.binding} · ${p.sub_side || ''}">
-        <div class="keylabel">${p.label}</div>
-        <div class="keymeta">${p.sub_side || ''} direct</div>
+
+  const layoutHtml = renderLayoutSVG(ps);
+  const xiaoHtml   = renderXiaoBoards(ps);
+  const summaryHtml = renderSummary();
+
+  body.innerHTML = `
+    <div class="layout-wrap">${layoutHtml}</div>
+    <div class="xiao-row">${xiaoHtml}</div>
+    ${summaryHtml}
+  `;
+
+  // Click on key → highlight key + its 2 pins
+  body.querySelectorAll('.layout-key').forEach(el => {
+    el.addEventListener('click', () => {
+      const idx = parseInt(el.dataset.idx, 10);
+      matrixState.highlightIdx =
+        matrixState.highlightIdx === idx ? null : idx;
+      matrixState.highlightPin = null;
+      renderMatrix();
+    });
+  });
+
+  // Click on pin → highlight all keys touching that pin
+  body.querySelectorAll('.xiao-pin').forEach(el => {
+    el.addEventListener('click', () => {
+      const side = el.dataset.side;
+      const pin  = parseInt(el.dataset.pin, 10);
+      const sig = `${side}:${pin}`;
+      matrixState.highlightPin =
+        matrixState.highlightPin === sig ? null : sig;
+      matrixState.highlightIdx = null;
+      renderMatrix();
+    });
+  });
+
+  applyHighlights(body);
+}
+
+function renderLayoutSVG(ps) {
+  const L = ps.layout;
+  const pad = 8;
+  const vbX = L.minX - pad, vbY = L.minY - pad;
+  const vbW = (L.maxX - L.minX) + pad*2;
+  const vbH = (L.maxY - L.minY) + pad*2;
+  let svg = `<svg class="layout-svg" viewBox="${vbX} ${vbY} ${vbW} ${vbH}" xmlns="http://www.w3.org/2000/svg">`;
+  for (const p of ps.positions) {
+    if (p.x === undefined) continue;
+    const cls = ['layout-key', classifyCell(p)].join(' ');
+    const w = p.w || 54, h = p.h || 54;
+    svg += `<g class="${cls}" data-idx="${p.idx}" transform="translate(${p.x},${p.y}) rotate(${p.rot || 0})">`;
+    svg += `<rect class="outer" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="6" ry="6"/>`;
+    svg += `<rect class="inner" x="${-w/2 + 5}" y="${-h/2 + 5}" width="${w-10}" height="${h-10}" rx="5" ry="5"/>`;
+    svg += `<text x="0" y="0">${escapeHtml(p.label)}</text>`;
+    svg += `<title>${escapeHtml(p.binding)}\n${p.side} d=${p.driver} s=${p.sensor}</title>`;
+    svg += `</g>`;
+  }
+  svg += `</svg>`;
+  return svg;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[<>&"]/g, c =>
+    ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+}
+
+function renderXiaoBoards(ps) {
+  const totalIncidence = pinIncidenceOf(ps.positions);
+  const deadIncidence = matrixState.marked
+    ? pinIncidenceOf(ps.positions.filter(p => p.testable && !matrixState.pressed.has(p.idx)))
+    : { L: {}, R: {} };
+
+  const html = ['L', 'R'].map(side => {
+    const labels = side === 'L' ? ps.pinLabelsL : ps.pinLabelsR;
+    const N = ps.pinsPerSide;
+    const sideName = side === 'L' ? 'Left half' : 'Right half';
+    const hi = matrixState.highlightPin && matrixState.highlightPin.startsWith(side + ':')
+      ? parseInt(matrixState.highlightPin.split(':')[1], 10) : null;
+    let target = null;
+    if (matrixState.highlightIdx !== null) {
+      target = ps.positions.find(p => p.idx === matrixState.highlightIdx);
+      if (target && target.side !== side) target = null;
+    }
+    let pinsHtml = '';
+    for (let i = 0; i < N; i++) {
+      const total = totalIncidence[side][i] || 0;
+      const dead  = deadIncidence[side][i] || 0;
+      const cls = ['xiao-pin'];
+      if (dead >= 2) cls.push('has-dead');
+      if (i === hi) cls.push('highlighted');
+      if (target && (target.driver === i || target.sensor === i)) cls.push('highlighted');
+      const lab = labels[i] || `P${i}`;
+      const role = target && target.driver === i ? ' driver'
+                : target && target.sensor === i ? ' sensor' : '';
+      pinsHtml += `<div class="${cls.join(' ')}" data-side="${side}" data-pin="${i}" title="GPIO ${lab}, used by ${total} keys">
+        <span class="pinlabel">${lab}</span>
+        <span class="pin-count">${dead > 0 ? `<span style="color:var(--peak-red);font-weight:700;">${dead} dead</span> · ` : ''}${total} keys${role}</span>
       </div>`;
     }
-    html += `</div></div>`;
-  }
-  html += renderSummary();
-  body.innerHTML = html;
+    return `
+      <div class="xiao-board">
+        <div class="xiao-side-label">${sideName} · Xiao BLE</div>
+        <div class="xiao-usbc"></div>
+        <div class="xiao-pinlist">${pinsHtml}</div>
+      </div>
+    `;
+  }).join('');
 
-  // Attach click handlers
+  return html;
+}
+
+function applyHighlights(body) {
+  const ps = matrixState.preset;
+  if (!ps) return;
+
+  if (matrixState.highlightIdx !== null) {
+    const target = ps.positions.find(p => p.idx === matrixState.highlightIdx);
+    if (!target) return;
+    body.querySelectorAll('.layout-key').forEach(el => {
+      const idx = parseInt(el.dataset.idx, 10);
+      const p = ps.positions.find(pp => pp.idx === idx);
+      if (!p || p.side !== target.side) return;
+      if (idx === target.idx) {
+        el.classList.add('highlight-target');
+      } else if (p.driver === target.driver || p.sensor === target.sensor ||
+                 p.driver === target.sensor || p.sensor === target.driver) {
+        el.classList.add('highlight-pin');
+      }
+    });
+  }
+
+  if (matrixState.highlightPin) {
+    const [side, pinStr] = matrixState.highlightPin.split(':');
+    const pin = parseInt(pinStr, 10);
+    body.querySelectorAll('.layout-key').forEach(el => {
+      const idx = parseInt(el.dataset.idx, 10);
+      const p = ps.positions.find(pp => pp.idx === idx);
+      if (!p || p.side !== side) return;
+      if (p.driver === pin || p.sensor === pin) {
+        el.classList.add('highlight-pin');
+      }
+    });
+  }
+}
+
+function attachKeyClickHandlers(body) {
   body.querySelectorAll('.pin-cell.key').forEach(el => {
     el.addEventListener('click', () => {
       const idx = parseInt(el.dataset.idx, 10);
@@ -2079,57 +2613,40 @@ function renderMatrix() {
       renderMatrix();
     });
   });
-
-  // Apply highlight on related cells
-  if (matrixState.highlightIdx !== null) {
-    const target = ps.positions.find(p => p.idx === matrixState.highlightIdx);
-    if (target) {
-      body.querySelectorAll('.pin-cell.key').forEach(el => {
-        const idx = parseInt(el.dataset.idx, 10);
-        const p = ps.positions.find(pp => pp.idx === idx);
-        if (!p || p.side !== target.side) return;
-        if (idx === target.idx) el.classList.add('highlight-target');
-        else if (p.driver === target.driver) el.classList.add('highlight-row');
-        else if (p.sensor === target.sensor) el.classList.add('highlight-col');
-      });
-    }
-  }
 }
 
-function renderPinGrid(positions, pinLabels, side, pinsPerSide) {
-  const N = pinsPerSide;
-  const labels = pinLabels.length === N ? pinLabels :
-    Array.from({length: N}, (_, i) => `P${i}`);
+// Legacy grid for keyboards without layout coords (Modula until parsed)
+function renderLegacyGridFallback(ps) {
+  let html = '<div style="margin-bottom:14px;color:var(--text-secondary);font-size:11px;">Physical layout not yet configured for this keyboard — showing pin-matrix grid:</div>';
+  const sides = { L: [], R: [], direct: [] };
+  for (const p of ps.positions) sides[p.side].push(p);
+  for (const side of ['L', 'R']) {
+    if (sides[side].length === 0) continue;
+    html += `<div class="matrix-side"><div class="matrix-side-title">${side === 'L' ? 'Left' : 'Right'}</div>`;
+    html += renderLegacyPinGrid(sides[side], side === 'L' ? ps.pinLabelsL : ps.pinLabelsR, ps.pinsPerSide);
+    html += `</div>`;
+  }
+  html += renderSummary();
+  return html;
+}
 
-  // Build (driver,sensor) → position lookup
+function renderLegacyPinGrid(positions, pinLabels, N) {
+  const labels = pinLabels.length === N ? pinLabels : Array.from({length: N}, (_, i) => `P${i}`);
   const at = {};
   for (const p of positions) at[`${p.driver},${p.sensor}`] = p;
-
-  const cellSize = 60;
-  let html = `<div class="pin-grid" style="grid-template-columns: 50px repeat(${N}, ${cellSize}px);">`;
-
-  // header row
+  let html = `<div class="pin-grid" style="grid-template-columns: 50px repeat(${N}, 60px);">`;
   html += `<div class="pin-cell label-corner">d↓ / s→</div>`;
   for (let s = 0; s < N; s++) {
-    html += `<div class="pin-cell label">s${s}<br><span style="font-size:8px;opacity:0.7">${labels[s]}</span></div>`;
+    html += `<div class="pin-cell label">${labels[s]}</div>`;
   }
-  // body rows
   for (let d = 0; d < N; d++) {
-    html += `<div class="pin-cell label">d${d}<br><span style="font-size:8px;opacity:0.7">${labels[d]}</span></div>`;
+    html += `<div class="pin-cell label">${labels[d]}</div>`;
     for (let s = 0; s < N; s++) {
-      if (d === s) {
-        html += `<div class="pin-cell diagonal">─</div>`;
-        continue;
-      }
+      if (d === s) { html += `<div class="pin-cell diagonal">─</div>`; continue; }
       const p = at[`${d},${s}`];
-      if (!p) {
-        html += `<div class="pin-cell empty"></div>`;
-        continue;
-      }
-      const cls = classifyCell(p);
-      html += `<div class="pin-cell key ${cls}" data-idx="${p.idx}" title="${p.binding}">
-        <div class="keylabel">${p.label}</div>
-      </div>`;
+      if (!p) { html += `<div class="pin-cell empty"></div>`; continue; }
+      html += `<div class="pin-cell key ${classifyCell(p)}" data-idx="${p.idx}" title="${p.binding}">
+        <div class="keylabel">${p.label}</div></div>`;
     }
   }
   html += `</div>`;
@@ -2144,8 +2661,7 @@ function renderSummary() {
   const dead = matrixState.marked
     ? testable.filter(p => !matrixState.pressed.has(p.idx))
     : [];
-  const untouched = matrixState.marked ? 0 :
-    testable.length - pressed.length;
+  const untouched = matrixState.marked ? 0 : testable.length - pressed.length;
 
   let html = `<div class="matrix-summary">`;
   html += `<div class="matrix-summary-title">Status</div>`;
@@ -2160,44 +2676,33 @@ function renderSummary() {
   html += `</div>`;
 
   if (matrixState.marked && dead.length > 0) {
-    // Cluster analysis
-    const byDriver = {};
-    const bySensor = {};
-    for (const p of dead) {
-      if (p.side === 'direct') continue;
-      const dk = `${p.side}:${p.driver}`;
-      const sk = `${p.side}:${p.sensor}`;
-      (byDriver[dk] ||= []).push(p);
-      (bySensor[sk] ||= []).push(p);
-    }
-    const clusters = [];
-    for (const [k, v] of Object.entries(byDriver)) {
-      if (v.length >= 2) {
-        const [side, di] = k.split(':');
-        const lab = (side === 'L' ? ps.pinLabelsL : ps.pinLabelsR)[parseInt(di)] || `P${di}`;
-        clusters.push(`<b>${v.length}</b> dead keys share <b>driver pin ${lab}</b> on ${side === 'L' ? 'LEFT' : 'RIGHT'} → check that pin's solder/trace`);
+    // Pin-incidence cluster analysis
+    const inc = pinIncidenceOf(dead);
+    const insights = [];
+    for (const side of ['L', 'R']) {
+      for (const [pinStr, count] of Object.entries(inc[side])) {
+        if (count >= 2) {
+          const lab = (side === 'L' ? ps.pinLabelsL : ps.pinLabelsR)[parseInt(pinStr)] || `P${pinStr}`;
+          insights.push({ side, pin: parseInt(pinStr), count, lab });
+        }
       }
     }
-    for (const [k, v] of Object.entries(bySensor)) {
-      if (v.length >= 2) {
-        const [side, si] = k.split(':');
-        const lab = (side === 'L' ? ps.pinLabelsL : ps.pinLabelsR)[parseInt(si)] || `P${si}`;
-        clusters.push(`<b>${v.length}</b> dead keys share <b>sensor pin ${lab}</b> on ${side === 'L' ? 'LEFT' : 'RIGHT'} → check that pin's solder/trace`);
-      }
-    }
-    if (clusters.length === 0) {
+    insights.sort((a, b) => b.count - a.count);
+    if (insights.length === 0) {
       html += `<div class="matrix-insight info">Dead keys are scattered — likely individual switch / diode solder issues.</div>`;
     } else {
-      for (const c of clusters) html += `<div class="matrix-insight">⚠ ${c}</div>`;
+      for (const x of insights) {
+        const sideName = x.side === 'L' ? 'LEFT' : 'RIGHT';
+        html += `<div class="matrix-insight">⚠ <b>${x.count}</b> dead keys touch pin <code>${x.lab}</code> on ${sideName} → inspect that pin's solder / trace on the Xiao BLE</div>`;
+      }
     }
-    // List dead keys
-    html += `<div class="matrix-insight info" style="font-size:11px;">Dead positions: `;
-    html += dead.map(p => `${p.label} <code>${p.side}d${p.driver}s${p.sensor}</code>`).join(', ');
-    html += `</div>`;
+    html += `<div class="matrix-insight info" style="font-size:11px;">Dead: ` +
+      dead.map(p => `${p.label} <code>${p.side}(${(p.side==='L'?ps.pinLabelsL:ps.pinLabelsR)[p.driver]}↔${(p.side==='L'?ps.pinLabelsL:ps.pinLabelsR)[p.sensor]})</code>`).join(', ') +
+      `</div>`;
   } else if (matrixState.marked && dead.length === 0) {
     html += `<div class="matrix-insight info">All testable keys responded ✓</div>`;
   } else {
-    html += `<div class="matrix-insight info">Keep typing — pressed keys turn green. Click <b>Mark untyped as DEAD</b> when done.</div>`;
+    html += `<div class="matrix-insight info">Type every key — pressed keys turn green. Click any key to see its two Xiao BLE pins; click a pin to see all keys wired to it. When done, click <b>Mark untyped as DEAD</b>.</div>`;
   }
   html += `</div>`;
   return html;
