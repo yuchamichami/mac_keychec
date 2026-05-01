@@ -302,6 +302,32 @@
     font-weight: 600;
     color: var(--text-primary);
   }
+  .row .held-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .row .held-chip.tap   { color: var(--accent-cyan); background: rgba(91,209,255,0.10); }
+  .row .held-chip.hold  { color: var(--up-orange);   background: rgba(255,168,91,0.10); }
+  .row .held-chip.short { color: var(--peak-red);    background: rgba(255,95,95,0.10); }
+  .row .chatter-chip {
+    display: inline-flex;
+    align-items: center;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--peak-red);
+    background: rgba(255,95,95,0.15);
+    border: 0.8px solid rgba(255,95,95,0.5);
+  }
   .row .extra {
     font-size: 11px;
     color: var(--text-secondary);
@@ -365,6 +391,7 @@
         <div class="keycap"          data-tone="beep">BEEP</div>
         <div class="keycap"          data-tone="pop">POP</div>
         <div class="keycap"          data-tone="tick">TICK</div>
+        <div class="keycap"          data-tone="synth">SYNTH</div>
       </div>
     </div>
 
@@ -539,12 +566,16 @@ const MOD_GLYPHS = [
 
 // ============= State =============
 const state = {
-  soundOn:  true,
-  tone:     'click',
-  volume:   0.8,    // 0..1.5
-  events:   [],
+  soundOn:   true,
+  tone:      'click',
+  volume:    0.8,    // 0..1.5
+  events:    [],
   maxEvents: 500,
+  // press tracking — keyed by code (or 'mouse.N' for buttons)
+  pressStart: {},
+  lastDown:   {},
 };
+const CHATTER_THRESHOLD_MS = 50;
 
 // ============= Sound (Web Audio API) =============
 let audioCtx = null;
@@ -554,29 +585,103 @@ function ensureAudio() {
   }
   if (audioCtx.state === 'suspended') audioCtx.resume();
 }
+
+// One-shot click for click/beep/pop/tick.
 function playClick() {
   if (!state.soundOn) return;
+  if (state.tone === 'synth') return;  // synth uses sustain path
   ensureAudio();
   if (!audioCtx) return;
   const now = audioCtx.currentTime;
   const params = ({
-    click: { f: 1500, dur: 0.030, decay: 6  },
-    beep:  { f:  880, dur: 0.080, decay: 3  },
-    pop:   { f:  600, dur: 0.025, decay: 5  },
-    tick:  { f: 4000, dur: 0.012, decay: 8  },
+    click: { f: 1500, dur: 0.030 },
+    beep:  { f:  880, dur: 0.080 },
+    pop:   { f:  600, dur: 0.025 },
+    tick:  { f: 4000, dur: 0.012 },
   })[state.tone];
   const osc  = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
   osc.type = 'sine';
   osc.frequency.value = params.f;
-  // amplitude envelope (matches the native EQ-style boost: peak 0.9 at vol=1.0,
-  // up to 1.35 at vol=1.5 — slight clipping above 100%, same trade-off)
   const peak = Math.min(state.volume, 1.5) * 0.9;
   gain.gain.setValueAtTime(peak, now);
   gain.gain.exponentialRampToValueAtTime(0.001, now + params.dur);
   osc.connect(gain).connect(audioCtx.destination);
   osc.start(now);
   osc.stop(now + params.dur);
+}
+
+// Sustained synth — fixed 440Hz sine, attack/release envelope, polyphony via
+// active-count: any number of keys held = tone plays, last release = tone stops.
+let synthOsc = null;
+let synthGain = null;
+let synthActiveCount = 0;
+const SYNTH_FREQ = 440;
+const SYNTH_ATTACK_S = 0.005;
+const SYNTH_RELEASE_S = 0.030;
+function synthPeakGain() { return Math.min(state.volume, 1.5) * 0.45; }
+
+function startSynth() {
+  if (!state.soundOn) return;
+  ensureAudio();
+  if (!audioCtx) return;
+  if (synthActiveCount === 0) {
+    const now = audioCtx.currentTime;
+    synthOsc = audioCtx.createOscillator();
+    synthGain = audioCtx.createGain();
+    synthOsc.type = 'sine';
+    synthOsc.frequency.value = SYNTH_FREQ;
+    synthGain.gain.setValueAtTime(0, now);
+    synthGain.gain.linearRampToValueAtTime(synthPeakGain(), now + SYNTH_ATTACK_S);
+    synthOsc.connect(synthGain).connect(audioCtx.destination);
+    synthOsc.start(now);
+  }
+  synthActiveCount++;
+}
+function stopSynth() {
+  synthActiveCount = Math.max(0, synthActiveCount - 1);
+  if (synthActiveCount === 0 && synthOsc && synthGain && audioCtx) {
+    const now = audioCtx.currentTime;
+    synthGain.gain.cancelScheduledValues(now);
+    synthGain.gain.setValueAtTime(synthGain.gain.value, now);
+    synthGain.gain.linearRampToValueAtTime(0, now + SYNTH_RELEASE_S);
+    synthOsc.stop(now + SYNTH_RELEASE_S + 0.005);
+    synthOsc = null;
+    synthGain = null;
+  }
+}
+function stopSynthAll() {
+  synthActiveCount = 0;
+  if (synthOsc && synthGain && audioCtx) {
+    const now = audioCtx.currentTime;
+    synthGain.gain.cancelScheduledValues(now);
+    synthGain.gain.setValueAtTime(synthGain.gain.value, now);
+    synthGain.gain.linearRampToValueAtTime(0, now + SYNTH_RELEASE_S);
+    synthOsc.stop(now + SYNTH_RELEASE_S + 0.005);
+    synthOsc = null;
+    synthGain = null;
+  }
+}
+
+// Test button: brief preview burst (works for both modes).
+function playTest() {
+  if (state.tone === 'synth') {
+    startSynth();
+    setTimeout(stopSynthAll, 180);
+  } else {
+    playClick();
+  }
+}
+
+// Route an event's sound based on direction + tone.
+function soundForEvent(direction) {
+  if (!state.soundOn) return;
+  if (state.tone === 'synth') {
+    if (direction === 'down')      startSynth();
+    else if (direction === 'up')   stopSynth();
+  } else {
+    playClick();
+  }
 }
 
 // ============= Knob (SVG arcs) =============
@@ -675,20 +780,27 @@ document.getElementById('powerWrap').addEventListener('click', () => {
 document.getElementById('toneRow').addEventListener('click', e => {
   const cap = e.target.closest('.keycap');
   if (!cap) return;
+  const prevTone = state.tone;
   state.tone = cap.dataset.tone;
   document.querySelectorAll('#toneRow .keycap').forEach(el => {
     el.classList.toggle('selected', el === cap);
   });
+  // If switching AWAY from synth while a tone is sustaining, cut it off.
+  if (prevTone === 'synth' && state.tone !== 'synth') {
+    stopSynthAll();
+  }
 });
 
 // ============= Action buttons =============
 document.getElementById('btnTest').addEventListener('click', () => {
   ensureAudio();
-  playClick();
+  playTest();
 });
 document.getElementById('btnCopy').addEventListener('click', () => {
   const text = state.events.map(e => {
     let s = `${e.direction}\t${e.label}`;
+    if (e.isChatter) s += `  CHATTER`;
+    if (e.holdMs != null) s += `  held:${e.holdMs}ms`;
     if (e.flagsText) s += `  flags ${e.flagsText}`;
     s += `  usage page: ${e.usagePage} (0x${e.usagePage.toString(16).padStart(4,'0')})  ` +
          `usage: ${e.usage} (0x${e.usage.toString(16).padStart(4,'0')})`;
@@ -712,9 +824,33 @@ function modifiersFromEvent(e) {
   return parts.join(',');
 }
 
+// Track press / chatter for an identifier; returns {isChatter, holdMs}.
+function track(direction, id) {
+  const now = performance.now();
+  if (direction === 'down') {
+    let isChatter = false;
+    const prev = state.lastDown[id];
+    if (prev !== undefined && now - prev < CHATTER_THRESHOLD_MS) {
+      isChatter = true;
+    }
+    state.lastDown[id]   = now;
+    state.pressStart[id] = now;
+    return { isChatter, holdMs: null };
+  } else {
+    let holdMs = null;
+    const start = state.pressStart[id];
+    if (start !== undefined) {
+      holdMs = Math.round(now - start);
+      delete state.pressStart[id];
+    }
+    return { isChatter: false, holdMs };
+  }
+}
+
 function emit(direction, code, e, isMouse) {
   if (isMouse) {
     const btn = (e.button ?? 0) + 1;
+    const t = track(direction, `mouse.${btn}`);
     return addEvent({
       direction,
       label: `{"pointing_button":"button${btn}"}`,
@@ -722,6 +858,8 @@ function emit(direction, code, e, isMouse) {
       usagePage: 0x09,
       usage: btn,
       extra: null,
+      holdMs: t.holdMs,
+      isChatter: t.isChatter,
     });
   }
   const map = HID_MAP[code];
@@ -731,6 +869,7 @@ function emit(direction, code, e, isMouse) {
   const extra = chars
     ? `chars: "${chars}"  code: ${code}`
     : `code: ${code}`;
+  const t = track(direction, code);
   addEvent({
     direction,
     label: `{"key_code":"${name}"}`,
@@ -738,6 +877,8 @@ function emit(direction, code, e, isMouse) {
     usagePage: 0x07,
     usage,
     extra,
+    holdMs: t.holdMs,
+    isChatter: t.isChatter,
   });
 }
 
@@ -752,7 +893,7 @@ function addEvent(evt) {
     const empty = document.getElementById('emptyMsg');
     if (empty) empty.remove();
   }
-  playClick();
+  soundForEvent(evt.direction);
 }
 
 function appendRow(e) {
@@ -797,6 +938,24 @@ function appendRow(e) {
   // meta line
   const meta = document.createElement('div');
   meta.className = 'meta';
+
+  // chatter chip (down only)
+  if (e.isChatter) {
+    const chip = document.createElement('div');
+    chip.className = 'chatter-chip';
+    chip.textContent = '⚠ CHATTER';
+    meta.appendChild(chip);
+  }
+
+  // held duration chip (up only)
+  if (e.holdMs != null) {
+    const cls = e.holdMs < 50 ? 'short' : (e.holdMs < 200 ? 'tap' : 'hold');
+    const chip = document.createElement('div');
+    chip.className = `held-chip ${cls}`;
+    chip.textContent = `held: ${e.holdMs}ms`;
+    meta.appendChild(chip);
+  }
+
   if (e.flagsText) {
     const glyphs = MOD_GLYPHS
       .filter(([needle, _]) => e.flagsText.includes(needle.toLowerCase()))
@@ -889,6 +1048,13 @@ window.addEventListener('mousedown', e => {
 window.addEventListener('mouseup',   e => emit('up',   null, e, true));
 // suppress context menu on right click so we can detect button2/3 cleanly
 window.addEventListener('contextmenu', e => e.preventDefault());
+
+// If the page loses focus mid-press, stop any sustaining synth and reset
+// press tracking so stale presses don't produce huge "held" times.
+window.addEventListener('blur', () => {
+  stopSynthAll();
+  state.pressStart = {};
+});
 
 // initial render
 updateKnob();

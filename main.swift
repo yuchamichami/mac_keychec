@@ -95,6 +95,10 @@ struct KeyEvent: Identifiable {
     let usagePage: Int
     let usage: Int
     let extra: String?
+    let holdMs: Int?       // populated on "up" events
+    let isChatter: Bool    // populated on "down" events; true if same key fired again within CHATTER_THRESHOLD_MS
+
+    static let chatterThresholdMs: Double = 50
 }
 
 @MainActor
@@ -113,6 +117,8 @@ final class EventStore: ObservableObject {
     func copyToPasteboard() {
         let lines = events.map { e -> String in
             var s = "\(e.direction)\t\(e.label)"
+            if e.isChatter { s += "  CHATTER" }
+            if let h = e.holdMs { s += "  held:\(h)ms" }
             if !e.flagsText.isEmpty { s += "  flags \(e.flagsText)" }
             s += String(format: "  usage page: %d (0x%04x)  usage: %d (0x%04x)",
                         e.usagePage, e.usagePage, e.usage, e.usage)
@@ -125,39 +131,114 @@ final class EventStore: ObservableObject {
 }
 
 // MARK: - Sound (0-150% volume via EQ gain)
+//
+// Two playback paths share the same EQ gain stage:
+//   - one-shot click: AVAudioPlayerNode + pre-rendered PCMBuffer
+//   - sustained synth: AVAudioSourceNode generating sine in real-time,
+//                      with attack/release envelope smoothing.
+
+// Mutable state touched by the audio render thread. Plain stored properties;
+// MainActor-side readers/writers and the render callback both touch the same
+// memory. For a toy synth this is fine — Float/Int word writes are atomic on
+// arm64 and we don't care about exact-sample sync.
+final class SynthState: @unchecked Sendable {
+    var freq: Double = 440           // A4
+    var phase: Double = 0
+    var envelope: Float = 0
+    var envelopeTarget: Float = 0
+    var activeCount: Int = 0
+    var volume: Float = 0.8          // mirrors UI volume so render block can scale
+    static let attackMs: Double = 5
+    static let releaseMs: Double = 30
+}
 
 @MainActor
 final class SoundPlayer: ObservableObject {
     private let engine = AVAudioEngine()
-    private let player = AVAudioPlayerNode()
+    private let player = AVAudioPlayerNode()         // one-shot click/beep/pop/tick
+    private var synthSource: AVAudioSourceNode!      // sustained synth (lazy after fmt known)
     private let eq = AVAudioUnitEQ(numberOfBands: 0)
     private var buffer: AVAudioPCMBuffer?
+    private let synth = SynthState()
 
     static let maxVolume: Float = 1.5
 
     @Published var volume: Float = 0.8 { didSet { applyVolume() } }
 
     enum Tone: String, CaseIterable, Identifiable {
-        case click, beep, pop, tick
+        case click, beep, pop, tick, synth
         var id: String { rawValue }
+        var isSustained: Bool { self == .synth }
     }
-    @Published var tone: Tone = .click { didSet { regenerateBuffer() } }
+    @Published var tone: Tone = .click {
+        didSet {
+            regenerateBuffer()
+            // If user switches AWAY from synth while a tone is sounding, kill it
+            if !tone.isSustained { stopSustainAll() }
+        }
+    }
 
     init() {
         engine.attach(player)
         engine.attach(eq)
+
         let fmt = engine.mainMixerNode.outputFormat(forBus: 0)
+        let synthState = synth  // capture for use in non-isolated closure
+
+        synthSource = AVAudioSourceNode(format: fmt) { _, _, frameCount, abl in
+            return Self.renderSynth(state: synthState, sampleRate: fmt.sampleRate,
+                                    frameCount: frameCount, abl: abl)
+        }
+        engine.attach(synthSource)
+
+        // Click path: player → eq → mainMixer (EQ provides the >100% volume boost).
         engine.connect(player, to: eq, format: fmt)
         engine.connect(eq, to: engine.mainMixerNode, format: fmt)
+        // Synth path: bypass the EQ since AVAudioUnitEQ has a single input bus.
+        // The render block scales by state.volume directly.
+        engine.connect(synthSource, to: engine.mainMixerNode, format: fmt)
+
         regenerateBuffer()
         do { try engine.start(); player.play() }
         catch { NSLog("AVAudioEngine start failed: \(error)") }
         applyVolume()
     }
 
+    // One-shot tone (click/beep/pop/tick). No-op if synth tone is selected.
     func play() {
-        guard let buf = buffer else { return }
+        guard !tone.isSustained, let buf = buffer else { return }
         player.scheduleBuffer(buf, at: nil, options: [.interrupts], completionHandler: nil)
+    }
+
+    // Test button: brief preview burst (works for both modes).
+    func playTest() {
+        if tone.isSustained {
+            startSustain()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { [weak self] in
+                self?.stopSustainAll()
+            }
+        } else {
+            play()
+        }
+    }
+
+    func startSustain() {
+        guard tone.isSustained else { return }
+        synth.activeCount += 1
+        synth.envelopeTarget = 1.0
+    }
+
+    func stopSustain() {
+        guard tone.isSustained else { return }
+        synth.activeCount = max(0, synth.activeCount - 1)
+        if synth.activeCount == 0 {
+            synth.envelopeTarget = 0
+        }
+    }
+
+    func stopSustainAll() {
+        synth.activeCount = 0
+        synth.envelopeTarget = 0
     }
 
     private func applyVolume() {
@@ -169,17 +250,53 @@ final class SoundPlayer: ObservableObject {
             player.volume = 1.0
             eq.globalGain = 20.0 * log10(v)
         }
+        // Mirror to synth state so its render block can scale (synth path
+        // bypasses the EQ, so this is the only volume control for it).
+        synth.volume = v
+    }
+
+    // Audio render callback (real-time thread). Static so it can capture the
+    // SynthState reference and run without MainActor isolation.
+    private static func renderSynth(state: SynthState,
+                                    sampleRate: Double,
+                                    frameCount: AVAudioFrameCount,
+                                    abl: UnsafeMutablePointer<AudioBufferList>) -> OSStatus {
+        let buffers = UnsafeMutableAudioBufferListPointer(abl)
+        let omega = 2.0 * .pi * state.freq / sampleRate
+        let attackPerSample: Float = 1.0 / Float(sampleRate * SynthState.attackMs / 1000)
+        let releasePerSample: Float = 1.0 / Float(sampleRate * SynthState.releaseMs / 1000)
+        let baseAmp: Float = 0.45  // ceiling at vol=1.0; with vol=1.5 → ~0.675 (no clipping)
+
+        for frame in 0..<Int(frameCount) {
+            if state.envelopeTarget > state.envelope {
+                state.envelope = min(state.envelopeTarget, state.envelope + attackPerSample)
+            } else if state.envelopeTarget < state.envelope {
+                state.envelope = max(state.envelopeTarget, state.envelope - releasePerSample)
+            }
+            let s = Float(sin(state.phase)) * state.envelope * baseAmp * state.volume
+            state.phase += omega
+            if state.phase >= 2 * .pi { state.phase -= 2 * .pi }
+            for buf in buffers {
+                if let p = buf.mData?.assumingMemoryBound(to: Float.self) {
+                    p[frame] = s
+                }
+            }
+        }
+        return noErr
     }
 
     private func regenerateBuffer() {
         let fmt = engine.mainMixerNode.outputFormat(forBus: 0)
         let sampleRate = fmt.sampleRate
+        // Synth has no buffer — return early.
+        if tone.isSustained { buffer = nil; return }
         let durationSec: Double; let frequency: Double; let decayRate: Double
         switch tone {
         case .click: durationSec = 0.030; frequency = 1500; decayRate = 6
         case .beep:  durationSec = 0.080; frequency = 880;  decayRate = 3
         case .pop:   durationSec = 0.025; frequency = 600;  decayRate = 5
         case .tick:  durationSec = 0.012; frequency = 4000; decayRate = 8
+        case .synth: return  // unreachable per guard above
         }
         let frames = AVAudioFrameCount(sampleRate * durationSec)
         guard let buf = AVAudioPCMBuffer(pcmFormat: fmt, frameCapacity: frames) else { return }
@@ -204,6 +321,13 @@ final class SoundPlayer: ObservableObject {
 final class KeyMonitor: ObservableObject {
     var onEvent: ((KeyEvent) -> Void)?
     private var localMonitor: Any?
+
+    // Press tracking — keyed by an Int identifier so keyboard / modifier /
+    // mouse can share the maps without collision (mouse offsets by 0x10000).
+    private var pressStart: [Int: Date] = [:]
+    private var lastDown: [Int: Date] = [:]
+
+    private static func mouseID(_ buttonNumber: Int) -> Int { 0x10000 + buttonNumber }
 
     func start() {
         guard localMonitor == nil else { return }
@@ -248,6 +372,28 @@ final class KeyMonitor: ObservableObject {
         }
     }
 
+    // Returns (isChatter, holdMs) given the press-tracking state.
+    private func track(direction: String, id: Int) -> (Bool, Int?) {
+        let now = Date()
+        if direction == "down" {
+            var isChatter = false
+            if let prev = lastDown[id],
+               now.timeIntervalSince(prev) * 1000 < KeyEvent.chatterThresholdMs {
+                isChatter = true
+            }
+            lastDown[id] = now
+            pressStart[id] = now
+            return (isChatter, nil)
+        } else {
+            var holdMs: Int? = nil
+            if let start = pressStart[id] {
+                holdMs = Int((now.timeIntervalSince(start) * 1000).rounded())
+                pressStart.removeValue(forKey: id)
+            }
+            return (false, holdMs)
+        }
+    }
+
     // MARK: Emitters
 
     private func emitKey(direction: String, keyCode: UInt16,
@@ -265,48 +411,60 @@ final class KeyMonitor: ObservableObject {
         } else {
             extra = "code: \(keyCode) (0x\(String(format: "%02x", keyCode)))"
         }
+        let (isChatter, holdMs) = track(direction: direction, id: Int(keyCode))
         onEvent?(KeyEvent(
             direction: direction,
             label: "{\"key_code\":\"\(name)\"}",
             flagsText: flagsString(modifierFlags),
             usagePage: 0x07,
             usage: usage,
-            extra: extra
+            extra: extra,
+            holdMs: holdMs,
+            isChatter: isChatter
         ))
     }
 
     private func emitFlags(keyCode: UInt16, modifierFlags: NSEvent.ModifierFlags) {
         guard let mod = kVKModifier[keyCode] else {
+            let (isChatter, holdMs) = track(direction: "down", id: Int(keyCode))
             onEvent?(KeyEvent(
                 direction: "down",
                 label: "{\"key_code\":\"modifier_\(keyCode)\"}",
                 flagsText: flagsString(modifierFlags),
                 usagePage: 0x07,
                 usage: 0,
-                extra: "code: \(keyCode)"
+                extra: "code: \(keyCode)",
+                holdMs: holdMs,
+                isChatter: isChatter
             ))
             return
         }
         let direction = modifierFlags.contains(mod.flag) ? "down" : "up"
+        let (isChatter, holdMs) = track(direction: direction, id: Int(keyCode))
         onEvent?(KeyEvent(
             direction: direction,
             label: "{\"key_code\":\"\(mod.name)\"}",
             flagsText: flagsString(modifierFlags),
             usagePage: 0x07,
             usage: mod.usage,
-            extra: nil
+            extra: nil,
+            holdMs: holdMs,
+            isChatter: isChatter
         ))
     }
 
     private func emitMouse(direction: String, buttonNumber: Int,
                            modifierFlags: NSEvent.ModifierFlags) {
+        let (isChatter, holdMs) = track(direction: direction, id: KeyMonitor.mouseID(buttonNumber))
         onEvent?(KeyEvent(
             direction: direction,
             label: "{\"pointing_button\":\"button\(buttonNumber)\"}",
             flagsText: flagsString(modifierFlags),
             usagePage: 0x09,
             usage: buttonNumber,
-            extra: nil
+            extra: nil,
+            holdMs: holdMs,
+            isChatter: isChatter
         ))
     }
 
@@ -704,7 +862,7 @@ struct ControlBar: View {
 
             // Action buttons
             HStack(spacing: 8) {
-                Keycap(width: 72, height: 40, action: { sound.play() }) {
+                Keycap(width: 72, height: 40, action: { sound.playTest() }) {
                     Text("TEST")
                         .font(.system(size: 11, weight: .semibold, design: .monospaced))
                         .tracking(1)
@@ -819,6 +977,34 @@ struct EventRow: View {
                 .font(.system(size: 14, weight: .medium, design: .monospaced))
 
                 HStack(spacing: 8) {
+                    if event.isChatter {
+                        Text("⚠ CHATTER")
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .tracking(1)
+                            .foregroundColor(.peakRed)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                    .fill(Color.peakRed.opacity(0.15))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                            .strokeBorder(Color.peakRed.opacity(0.5), lineWidth: 0.8)
+                                    )
+                            )
+                    }
+                    if let h = event.holdMs {
+                        let color: Color = h < 50 ? .peakRed : (h < 200 ? .accentCyan : .upOrange)
+                        Text("held: \(h)ms")
+                            .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                            .foregroundColor(color)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4, style: .continuous)
+                                    .fill(color.opacity(0.10))
+                            )
+                    }
                     if !modGlyphs.isEmpty {
                         HStack(spacing: 4) {
                             ForEach(modGlyphs, id: \.self) { g in
@@ -997,7 +1183,13 @@ struct ContentView: View {
         .onAppear {
             monitor.onEvent = { [weak store, weak sound] e in
                 store?.add(e)
-                if soundEnabled { sound?.play() }
+                guard soundEnabled, let sound = sound else { return }
+                if sound.tone.isSustained {
+                    if e.direction == "down"      { sound.startSustain() }
+                    else if e.direction == "up"   { sound.stopSustain() }
+                } else {
+                    sound.play()  // existing one-shot click on every event
+                }
             }
             monitor.start()
         }
