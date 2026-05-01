@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="800" viewBox="0 0 1600 800">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0B1030"></stop><stop offset="100%" stop-color="#0A0C1C"></stop></linearGradient>
+    <radialGradient id="bgGlow" cx="0.5" cy="0" r="0.6"><stop offset="0%" stop-color="#5847C8" stop-opacity="0.35"></stop><stop offset="100%" stop-color="#000" stop-opacity="0"></stop></radialGradient>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a1c2e"></stop><stop offset="100%" stop-color="#14162a"></stop></linearGradient>
+  </defs>
+  <rect width="1600" height="800" fill="url(#bg)"></rect>
+  <rect width="1600" height="800" fill="url(#bgGlow)"></rect>
+
+  
+  <svg x="80" y="56" width="72" height="72" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="kc-hero1-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0B1030"></stop><stop offset="55%" stop-color="#171347"></stop><stop offset="100%" stop-color="#2C1454"></stop></linearGradient>
+    <linearGradient id="kc-hero1-rim" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fff" stop-opacity="0.22"></stop><stop offset="50%" stop-color="#fff" stop-opacity="0"></stop><stop offset="100%" stop-color="#000" stop-opacity="0.3"></stop></linearGradient>
+    <linearGradient id="kc-hero1-top" x1="0.3" y1="0" x2="0.7" y2="1"><stop offset="0%" stop-color="#FCFCFE"></stop><stop offset="60%" stop-color="#EAEAF1"></stop><stop offset="100%" stop-color="#D2D2DE"></stop></linearGradient>
+    <linearGradient id="kc-hero1-front" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A6A6B8"></stop><stop offset="100%" stop-color="#6E6E84"></stop></linearGradient>
+    <linearGradient id="kc-hero1-right" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#9090A6"></stop><stop offset="100%" stop-color="#5A5A70"></stop></linearGradient>
+    <linearGradient id="kc-hero1-left" x1="1" y1="0" x2="0" y2="0"><stop offset="0%" stop-color="#8A8AA0"></stop><stop offset="100%" stop-color="#56566B"></stop></linearGradient>
+    <linearGradient id="kc-hero1-wave" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#5BD1FF"></stop><stop offset="100%" stop-color="#2E8BFF"></stop></linearGradient>
+    <radialGradient id="kc-hero1-sheen" cx="0.32" cy="0.1" r="0.65"><stop offset="0%" stop-color="#fff" stop-opacity="0.75"></stop><stop offset="55%" stop-color="#fff" stop-opacity="0"></stop></radialGradient>
+    <radialGradient id="kc-hero1-shadow" cx="0.5" cy="0.5" r="0.5"><stop offset="0%" stop-color="#000" stop-opacity="0.6"></stop><stop offset="100%" stop-color="#000" stop-opacity="0"></stop></radialGradient>
+    <radialGradient id="kc-hero1-glow" cx="0.5" cy="0.55" r="0.6"><stop offset="0%" stop-color="#5847C8" stop-opacity="0.5"></stop><stop offset="60%" stop-color="#3B6BFF" stop-opacity="0.12"></stop><stop offset="100%" stop-color="#000" stop-opacity="0"></stop></radialGradient>
+    <clipPath id="kc-hero1-squircle"><rect x="0" y="0" width="1024" height="1024" rx="229.0688" ry="229.0688"></rect></clipPath>
+  </defs>
+  <g clip-path="url(#kc-hero1-squircle)">
+    <rect width="1024" height="1024" fill="url(#kc-hero1-bg)"></rect>
+    <rect width="1024" height="1024" fill="url(#kc-hero1-glow)"></rect>
+    
+    <g stroke="url(#kc-hero1-wave)" fill="none" stroke-linecap="round" stroke-width="14">
+      <path d="M 800 460 Q 880 360 855 240" opacity="0.95"></path>
+      <path d="M 850 510 Q 950 380 945 200" opacity="0.6"></path>
+      <path d="M 895 555 Q 1010 380 1015 165" opacity="0.32"></path>
+    </g>
+    <ellipse cx="512" cy="760" rx="280" ry="30" fill="url(#kc-hero1-shadow)"></ellipse>
+    <path d="M 200 668 L 824 668 L 804 700 L 220 700 Z" fill="#272838" opacity="0.85"></path>
+    <path d="M 230 600 L 794 600 L 820 668 L 204 668 Z" fill="url(#kc-hero1-front)"></path>
+    <path d="M 782 320 L 794 600 L 820 668 L 814 336 Z" fill="url(#kc-hero1-right)" opacity="0.92"></path>
+    <path d="M 242 320 L 230 600 L 204 668 L 210 336 Z" fill="url(#kc-hero1-left)" opacity="0.88"></path>
+    <path d="M 242 320 Q 512 306 782 320 L 794 600 Q 512 612 230 600 Z" fill="url(#kc-hero1-top)"></path>
+    <path d="M 242 320 Q 512 306 782 320 L 794 600 Q 512 612 230 600 Z" fill="url(#kc-hero1-sheen)"></path>
+    <text x="512" y="464" text-anchor="middle" dominant-baseline="middle" font-family="JetBrains Mono, SF Mono, monospace" font-weight="700" font-size="230" fill="#10133A" letter-spacing="-6">K</text>
+    <path d="M 248 321 Q 512 308 776 321" fill="none" stroke="#fff" stroke-opacity="0.85" stroke-width="2"></path>
+    <rect x="0.5" y="0.5" width="1023" height="1023" rx="229.0688" ry="229.0688" fill="none" stroke="url(#kc-hero1-rim)" stroke-width="2"></rect>
+  </g>
+</svg>
+  <text x="172" y="106" font-family="JetBrains Mono, monospace" font-size="28" font-weight="700" fill="#ffffff" letter-spacing="-1">KeyCheck</text>
+  <rect x="316" y="86" width="180" height="28" rx="14" fill="none" stroke="rgba(255,255,255,0.12)"></rect>
+  <text x="406" y="105" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#8a8da8">macOS · ZMK · QMK</text>
+
+  
+  <rect x="80" y="160" width="1440" height="540" rx="14" fill="#0b0c18" stroke="rgba(255,255,255,0.08)"></rect>
+  <rect x="80" y="160" width="1440" height="40" rx="14" fill="url(#chrome)"></rect>
+  <rect x="80" y="186" width="1440" height="14" fill="url(#chrome)"></rect>
+  <line x1="80" y1="200" x2="1520" y2="200" stroke="rgba(255,255,255,0.06)"></line>
+  <circle cx="102" cy="180" r="6" fill="#ff5f57"></circle>
+  <circle cx="122" cy="180" r="6" fill="#febc2e"></circle>
+  <circle cx="142" cy="180" r="6" fill="#28c840"></circle>
+  <text x="800" y="185" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#8a8da8">KeyCheck</text>
+
+  
+  <text x="104" y="232" font-family="JetBrains Mono, monospace" font-size="13" fill="#e8e9f5">Sound</text>
+  <rect x="170" y="218" width="32" height="18" rx="9" fill="#5BD1FF"></rect>
+  <circle cx="195" cy="227" r="6" fill="#ffffff"></circle>
+  
+  <rect x="230" y="216" width="220" height="22" rx="6" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)"></rect>
+  <rect x="230" y="216" width="55" height="22" rx="6" fill="rgba(255,255,255,0.08)"></rect>
+  <text x="257" y="231" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#ffffff">Click</text>
+  <text x="312" y="231" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#8a8da8">Beep</text>
+  <text x="367" y="231" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#8a8da8">Pop</text>
+  <text x="422" y="231" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#8a8da8">Tick</text>
+  
+  <text x="475" y="232" font-family="JetBrains Mono, monospace" font-size="14" fill="#8a8da8">♪</text>
+  <rect x="495" y="225" width="140" height="4" rx="2" fill="rgba(255,255,255,0.08)"></rect>
+  <rect x="495" y="225" width="56" height="4" rx="2" fill="#5BD1FF" opacity="0.7"></rect>
+  <text x="645" y="232" font-family="JetBrains Mono, monospace" font-size="11" fill="#8a8da8">120%</text>
+
+  <rect x="1300" y="216" width="58" height="24" rx="6" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.06)"></rect>
+  <text x="1329" y="232" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#e8e9f5">Test</text>
+  <rect x="1368" y="216" width="58" height="24" rx="6" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.06)"></rect>
+  <text x="1397" y="232" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#e8e9f5">Copy</text>
+  <rect x="1436" y="216" width="74" height="24" rx="6" fill="rgba(91,209,255,0.1)" stroke="rgba(91,209,255,0.3)"></rect>
+  <text x="1473" y="232" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#5BD1FF">Capture</text>
+
+  <line x1="80" y1="256" x2="1520" y2="256" stroke="rgba(255,255,255,0.05)"></line>
+  <rect x="81" y="256" width="1438" height="442" fill="#06070f"></rect>
+
+  
+    <text x="120" y="298" font-family="JetBrains Mono, monospace" font-size="22" font-weight="300" fill="#4ade80">down</text>
+    <text x="230" y="298" font-family="JetBrains Mono, monospace" font-size="16" fill="#ffffff">{<tspan fill="#c9caf0">&#34;key_code&#34;</tspan>: <tspan fill="#ffd58a">&#34;left_shift&#34;</tspan>}</text>
+    <text x="630" y="298" font-family="JetBrains Mono, monospace" font-size="14" fill="#6e708e">flags shift</text>
+    <text x="1480" y="292" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="12" fill="#5d607d">usage page: 7 (0x0007)  usage: 225 (0x00e1)</text>
+    <line x1="100" y1="314" x2="1500" y2="314" stroke="#ffffff" stroke-opacity="0.04"></line>
+  
+    <text x="120" y="352" font-family="JetBrains Mono, monospace" font-size="22" font-weight="300" fill="#4ade80">down</text>
+    <text x="230" y="352" font-family="JetBrains Mono, monospace" font-size="16" fill="#ffffff">{<tspan fill="#c9caf0">&#34;key_code&#34;</tspan>: <tspan fill="#ffd58a">&#34;k&#34;</tspan>}</text>
+    <text x="630" y="352" font-family="JetBrains Mono, monospace" font-size="14" fill="#6e708e">flags shift</text>
+    <text x="1480" y="346" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="12" fill="#5d607d">usage page: 7 (0x0007)  usage: 14 (0x000e)</text>
+    <line x1="100" y1="368" x2="1500" y2="368" stroke="#ffffff" stroke-opacity="0.04"></line>
+  
+    <text x="120" y="406" font-family="JetBrains Mono, monospace" font-size="22" font-weight="300" fill="#fb923c">up</text>
+    <text x="230" y="406" font-family="JetBrains Mono, monospace" font-size="16" fill="#ffffff">{<tspan fill="#c9caf0">&#34;key_code&#34;</tspan>: <tspan fill="#ffd58a">&#34;k&#34;</tspan>}</text>
+    <text x="630" y="406" font-family="JetBrains Mono, monospace" font-size="14" fill="#6e708e">flags shift</text>
+    <text x="1480" y="400" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="12" fill="#5d607d">usage page: 7 (0x0007)  usage: 14 (0x000e)</text>
+    <line x1="100" y1="422" x2="1500" y2="422" stroke="#ffffff" stroke-opacity="0.04"></line>
+  
+    <text x="120" y="460" font-family="JetBrains Mono, monospace" font-size="22" font-weight="300" fill="#fb923c">up</text>
+    <text x="230" y="460" font-family="JetBrains Mono, monospace" font-size="16" fill="#ffffff">{<tspan fill="#c9caf0">&#34;key_code&#34;</tspan>: <tspan fill="#ffd58a">&#34;left_shift&#34;</tspan>}</text>
+    
+    <text x="1480" y="454" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="12" fill="#5d607d">usage page: 7 (0x0007)  usage: 225 (0x00e1)</text>
+    <line x1="100" y1="476" x2="1500" y2="476" stroke="#ffffff" stroke-opacity="0.04"></line>
+  
+    <text x="120" y="514" font-family="JetBrains Mono, monospace" font-size="22" font-weight="300" fill="#4ade80">down</text>
+    <text x="230" y="514" font-family="JetBrains Mono, monospace" font-size="16" fill="#ffffff">{<tspan fill="#c9caf0">&#34;key_code&#34;</tspan>: <tspan fill="#ffd58a">&#34;left_command&#34;</tspan>}</text>
+    <text x="630" y="514" font-family="JetBrains Mono, monospace" font-size="14" fill="#6e708e">flags command</text>
+    <text x="1480" y="508" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="12" fill="#5d607d">usage page: 7 (0x0007)  usage: 227 (0x00e3)</text>
+    <line x1="100" y1="530" x2="1500" y2="530" stroke="#ffffff" stroke-opacity="0.04"></line>
+  
+    <text x="120" y="568" font-family="JetBrains Mono, monospace" font-size="22" font-weight="300" fill="#4ade80">down</text>
+    <text x="230" y="568" font-family="JetBrains Mono, monospace" font-size="16" fill="#ffffff">{<tspan fill="#c9caf0">&#34;key_code&#34;</tspan>: <tspan fill="#ffd58a">&#34;spacebar&#34;</tspan>}</text>
+    <text x="630" y="568" font-family="JetBrains Mono, monospace" font-size="14" fill="#6e708e">flags command</text>
+    <text x="1480" y="562" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="12" fill="#5d607d">usage page: 7 (0x0007)  usage: 44 (0x002c)</text>
+    <line x1="100" y1="584" x2="1500" y2="584" stroke="#ffffff" stroke-opacity="0.04"></line>
+  
+
+  
+  <text x="80" y="760" font-family="JetBrains Mono, monospace" font-size="36" font-weight="700" fill="#ffffff" letter-spacing="-1.5">Press a key. <tspan fill="#5BD1FF">Hear a click.</tspan> See the code.</text>
+  <text x="1520" y="760" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="14" fill="#8a8da8">github.com/yuchamichami/mac_keychec</text>
+</svg>
