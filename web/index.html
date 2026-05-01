@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KeyCheck — Web</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B1030'/%3E%3Crect x='25' y='35' width='50' height='40' rx='6' fill='%23FCFCFE'/%3E%3Ctext x='50' y='65' font-family='monospace' font-size='28' font-weight='700' text-anchor='middle' fill='%230B1030'%3EK%3C/text%3E%3C/svg%3E">
+<style>
+  /* ============= Design tokens (verbatim from Cladesign_export2/tokens.json) ============= */
+  :root {
+    --bg-window:      #0B1030;
+    --bg-window-grad: #171347;
+    --bg-card:        #0E0F24;
+    --bg-card-hover:  #131428;
+    --accent-cyan:    #5BD1FF;
+    --accent-cyan-2:  #2E8BFF;
+    --down-green:     #5BFF8B;
+    --up-orange:      #FFA85B;
+    --peak-red:       #FF5F5F;
+    --text-primary:   #ECEEFF;
+    --text-secondary: #7D8090;
+    --keycap-top-l:   #FCFCFE;
+    --keycap-top-d:   #D2D2DE;
+    --metal-light:    #3A3D4A;
+    --metal-dark:     #1D1F28;
+    --divider:        rgba(255,255,255,0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Monaco, monospace;
+    color: var(--text-primary);
+    background:
+      radial-gradient(circle at top left, rgba(46, 139, 255, 0.10) 0%, transparent 60%),
+      linear-gradient(180deg, var(--bg-window-grad) 0%, var(--bg-window) 100%);
+    overflow: hidden;
+    user-select: none;
+  }
+  /* ============= Layout ============= */
+  .app {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    height: 100vh;
+    padding: 22px 18px 18px;
+  }
+  .control-bar {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: rgba(14, 15, 36, 0.6);
+    border: 1px solid var(--divider);
+    border-radius: 14px;
+    padding: 18px 24px;
+  }
+  .vsep {
+    width: 1px;
+    height: 64px;
+    background: rgba(255, 255, 255, 0.06);
+  }
+  .section-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .log-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+  }
+  .log-header .title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+  .log-header .count {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+  }
+  /* ============= Power button ============= */
+  .power-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+  }
+  .power {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 35% 30%, #4B4F5E 0%, #2A2C38 50%, #15161E 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.20),
+      inset 0 -3px 6px rgba(0,0,0,0.7),
+      0 4px 10px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 80ms ease-out;
+  }
+  .power:active { transform: scale(0.96); }
+  .power .glyph {
+    color: var(--text-secondary);
+    transition: color 120ms;
+  }
+  .power.on .glyph {
+    color: var(--down-green);
+    filter: drop-shadow(0 0 4px rgba(91, 255, 139, 0.6));
+  }
+  .power .led {
+    position: absolute;
+    top: 6px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.10);
+    transition: background 150ms, box-shadow 150ms;
+  }
+  .power.on .led {
+    background: var(--down-green);
+    box-shadow: 0 0 5px var(--down-green), 0 0 12px rgba(91, 255, 139, 0.6);
+  }
+  /* ============= Tone keycap row ============= */
+  .tone-section { display: flex; flex-direction: column; gap: 6px; }
+  .keycap-row { display: flex; gap: 6px; }
+  .keycap {
+    width: 76px;
+    height: 40px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: transform 80ms ease-out, filter 100ms;
+    background:
+      linear-gradient(180deg, #20222E 0%, #15161E 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.10),
+      inset 0 -2px 4px rgba(0,0,0,0.40),
+      0 2px 4px rgba(0,0,0,0.35);
+    color: var(--text-primary);
+  }
+  .keycap.action {
+    width: 72px;
+  }
+  .keycap:hover {
+    filter: brightness(1.1);
+  }
+  .keycap:active {
+    transform: scale(0.96);
+  }
+  .keycap.selected {
+    background: linear-gradient(180deg, var(--keycap-top-l) 0%, var(--keycap-top-d) 100%);
+    border: 1.5px solid rgba(91, 209, 255, 0.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      0 0 12px rgba(91, 209, 255, 0.50),
+      0 0 22px rgba(91, 209, 255, 0.25);
+    color: rgba(0, 0, 0, 0.85);
+  }
+  /* ============= Volume knob ============= */
+  .knob-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .knob-svg {
+    width: 84px;
+    height: 84px;
+    cursor: ns-resize;
+    touch-action: none;
+  }
+  .knob-pct {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .knob-pct.peak { color: var(--peak-red); }
+  /* ============= Action keycaps ============= */
+  .actions { display: flex; gap: 8px; margin-left: auto; }
+  /* ============= Event log ============= */
+  .log-container {
+    flex: 1;
+    position: relative;
+    background: linear-gradient(180deg, #08091A 0%, #0E0F24 100%);
+    border: 1px solid var(--divider);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .log-scroll {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+  .log-scroll::-webkit-scrollbar { width: 8px; }
+  .log-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.10);
+    border-radius: 4px;
+  }
+  /* CRT scanline */
+  .scanline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 60px;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 0%, rgba(91, 209, 255, 0.13) 50%, transparent 100%);
+    mix-blend-mode: plus-lighter;
+    animation: scan 6s linear infinite;
+  }
+  @keyframes scan {
+    0%   { top: 100%; }
+    100% { top: -60px; }
+  }
+  /* Event row */
+  .row {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding-right: 18px;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.04);
+    position: relative;
+    transition: background 120ms;
+  }
+  .row:hover {
+    background: rgba(91, 209, 255, 0.04);
+  }
+  .row .accent {
+    width: 4px;
+    height: 56px;
+    flex-shrink: 0;
+    animation: rowFlash 250ms ease-out;
+  }
+  @keyframes rowFlash {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  .row.down .accent {
+    background: var(--down-green);
+    box-shadow: 0 0 8px var(--down-green);
+  }
+  .row.up .accent {
+    background: var(--up-orange);
+    box-shadow: 0 0 8px var(--up-orange);
+  }
+  .row .dir {
+    width: 70px;
+    margin-left: 14px;
+    font-size: 22px;
+    font-weight: 300;
+  }
+  .row.down .dir { color: var(--down-green); }
+  .row.up   .dir { color: var(--up-orange); }
+  .row .center {
+    flex: 1;
+    padding-left: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .row .json {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .row .json .punct  { color: var(--text-secondary); }
+  .row .json .key    { color: var(--accent-cyan); }
+  .row .json .value  { color: var(--text-primary); }
+  .row .meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 16px;
+  }
+  .row .glyph-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .row .extra {
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+  .row .right-cols {
+    display: flex;
+    gap: 16px;
+    margin-left: 14px;
+  }
+  .row .col {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .row .col-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--text-secondary);
+  }
+  .row .col-value {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  /* Empty state */
+  .empty-msg {
+    padding: 40px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  /* Drag-region for windowed feel (no actual drag) */
+  .titlebar-spacer { height: 0; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="control-bar" id="controlBar">
+    <!-- Sound power -->
+    <div class="power-wrap" id="powerWrap" title="Sound on/off">
+      <div class="power on" id="powerBtn">
+        <span class="led"></span>
+        <svg class="glyph" width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M10 4 V10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M5.5 6 A6 6 0 1 0 14.5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="section-label">Sound</div>
+    </div>
+
+    <div class="vsep"></div>
+
+    <!-- Tone selector -->
+    <div class="tone-section">
+      <div class="section-label">Tone</div>
+      <div class="keycap-row" id="toneRow">
+        <div class="keycap selected" data-tone="click">CLICK</div>
+        <div class="keycap"          data-tone="beep">BEEP</div>
+        <div class="keycap"          data-tone="pop">POP</div>
+        <div class="keycap"          data-tone="tick">TICK</div>
+      </div>
+    </div>
+
+    <div class="vsep"></div>
+
+    <!-- Volume knob -->
+    <div class="knob-wrap">
+      <svg class="knob-svg" id="knob" viewBox="0 0 84 84">
+        <defs>
+          <linearGradient id="cyanGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%"  stop-color="#2E8BFF"/>
+            <stop offset="100%" stop-color="#5BD1FF"/>
+          </linearGradient>
+          <linearGradient id="redGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#FFA85B"/>
+            <stop offset="100%" stop-color="#FF5F5F"/>
+          </linearGradient>
+          <radialGradient id="metalGrad" cx="0.35" cy="0.30" r="0.65">
+            <stop offset="0%"  stop-color="#545766"/>
+            <stop offset="60%" stop-color="#2C2E3A"/>
+            <stop offset="100%" stop-color="#15161E"/>
+          </radialGradient>
+          <filter id="cyanGlow"><feGaussianBlur stdDeviation="2.5"/></filter>
+          <filter id="redGlow"><feGaussianBlur stdDeviation="2.5"/></filter>
+        </defs>
+        <!-- background arc -->
+        <path id="arcBg" stroke="rgba(255,255,255,0.06)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <!-- lit cyan arc (0..100%) -->
+        <path id="arcLit" stroke="url(#cyanGrad)" stroke-width="3" fill="none" stroke-linecap="round" filter="url(#cyanGlow)"/>
+        <path id="arcLit2" stroke="url(#cyanGrad)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <!-- peak red arc (100..150%) -->
+        <path id="arcPeak" stroke="url(#redGrad)" stroke-width="3" fill="none" stroke-linecap="round" filter="url(#redGlow)"/>
+        <path id="arcPeak2" stroke="url(#redGrad)" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <!-- knob body -->
+        <circle cx="42" cy="42" r="30" fill="url(#metalGrad)" stroke="rgba(255,255,255,0.18)" stroke-width="0.8"/>
+        <circle cx="42" cy="42" r="30" fill="none" stroke="rgba(0,0,0,0.6)" stroke-width="0.8" transform="translate(0,1)" opacity="0.5"/>
+        <!-- indicator -->
+        <line id="indicator" stroke="#5BD1FF" stroke-width="2" stroke-linecap="round"
+              x1="42" y1="20" x2="42" y2="29"
+              filter="url(#cyanGlow)"/>
+      </svg>
+      <div class="knob-pct" id="knobPct">80%</div>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <div class="keycap action" id="btnTest">TEST</div>
+      <div class="keycap action" id="btnCopy">COPY</div>
+      <div class="keycap action" id="btnClear">CLEAR</div>
+    </div>
+  </header>
+
+  <div class="log-header">
+    <div class="title">Keyboard &amp; pointing events</div>
+    <div class="count"><span id="evtCount">0</span> events</div>
+  </div>
+
+  <div class="log-container">
+    <div class="scanline"></div>
+    <div class="log-scroll" id="logScroll">
+      <div class="empty-msg" id="emptyMsg">Click anywhere or press a key to begin</div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ============= HID code mapping (USB Keyboard usage page 0x07) =============
+// Source of truth: matches the macOS native version's name conventions.
+const HID_MAP = {
+  // letters
+  KeyA: ['a', 0x04], KeyB: ['b', 0x05], KeyC: ['c', 0x06], KeyD: ['d', 0x07],
+  KeyE: ['e', 0x08], KeyF: ['f', 0x09], KeyG: ['g', 0x0A], KeyH: ['h', 0x0B],
+  KeyI: ['i', 0x0C], KeyJ: ['j', 0x0D], KeyK: ['k', 0x0E], KeyL: ['l', 0x0F],
+  KeyM: ['m', 0x10], KeyN: ['n', 0x11], KeyO: ['o', 0x12], KeyP: ['p', 0x13],
+  KeyQ: ['q', 0x14], KeyR: ['r', 0x15], KeyS: ['s', 0x16], KeyT: ['t', 0x17],
+  KeyU: ['u', 0x18], KeyV: ['v', 0x19], KeyW: ['w', 0x1A], KeyX: ['x', 0x1B],
+  KeyY: ['y', 0x1C], KeyZ: ['z', 0x1D],
+  // digits
+  Digit1: ['1', 0x1E], Digit2: ['2', 0x1F], Digit3: ['3', 0x20], Digit4: ['4', 0x21],
+  Digit5: ['5', 0x22], Digit6: ['6', 0x23], Digit7: ['7', 0x24], Digit8: ['8', 0x25],
+  Digit9: ['9', 0x26], Digit0: ['0', 0x27],
+  // specials
+  Enter: ['return_or_enter', 0x28],
+  Escape: ['escape', 0x29],
+  Backspace: ['delete_or_backspace', 0x2A],
+  Tab: ['tab', 0x2B],
+  Space: ['spacebar', 0x2C],
+  Minus: ['hyphen', 0x2D],
+  Equal: ['equal_sign', 0x2E],
+  BracketLeft: ['open_bracket', 0x2F],
+  BracketRight: ['close_bracket', 0x30],
+  Backslash: ['backslash', 0x31],
+  Semicolon: ['semicolon', 0x33],
+  Quote: ['quote', 0x34],
+  Backquote: ['grave_accent_and_tilde', 0x35],
+  Comma: ['comma', 0x36],
+  Period: ['period', 0x37],
+  Slash: ['slash', 0x38],
+  CapsLock: ['caps_lock', 0x39],
+  // function keys
+  F1: ['f1', 0x3A], F2: ['f2', 0x3B], F3: ['f3', 0x3C], F4: ['f4', 0x3D],
+  F5: ['f5', 0x3E], F6: ['f6', 0x3F], F7: ['f7', 0x40], F8: ['f8', 0x41],
+  F9: ['f9', 0x42], F10: ['f10', 0x43], F11: ['f11', 0x44], F12: ['f12', 0x45],
+  F13: ['f13', 0x68], F14: ['f14', 0x69], F15: ['f15', 0x6A], F16: ['f16', 0x6B],
+  F17: ['f17', 0x6C], F18: ['f18', 0x6D], F19: ['f19', 0x6E], F20: ['f20', 0x6F],
+  // navigation
+  PrintScreen: ['print_screen', 0x46],
+  ScrollLock: ['scroll_lock', 0x47],
+  Pause: ['pause', 0x48],
+  Insert: ['insert', 0x49],
+  Home: ['home', 0x4A],
+  PageUp: ['page_up', 0x4B],
+  Delete: ['delete_forward', 0x4C],
+  End: ['end', 0x4D],
+  PageDown: ['page_down', 0x4E],
+  ArrowRight: ['right_arrow', 0x4F],
+  ArrowLeft: ['left_arrow', 0x50],
+  ArrowDown: ['down_arrow', 0x51],
+  ArrowUp: ['up_arrow', 0x52],
+  // numpad
+  NumLock: ['keypad_num_lock', 0x53],
+  NumpadDivide: ['keypad_slash', 0x54],
+  NumpadMultiply: ['keypad_asterisk', 0x55],
+  NumpadSubtract: ['keypad_hyphen', 0x56],
+  NumpadAdd: ['keypad_plus', 0x57],
+  NumpadEnter: ['keypad_enter', 0x58],
+  Numpad1: ['keypad_1', 0x59], Numpad2: ['keypad_2', 0x5A], Numpad3: ['keypad_3', 0x5B],
+  Numpad4: ['keypad_4', 0x5C], Numpad5: ['keypad_5', 0x5D], Numpad6: ['keypad_6', 0x5E],
+  Numpad7: ['keypad_7', 0x5F], Numpad8: ['keypad_8', 0x60], Numpad9: ['keypad_9', 0x61],
+  Numpad0: ['keypad_0', 0x62],
+  NumpadDecimal: ['keypad_period', 0x63],
+  NumpadEqual: ['keypad_equal_sign', 0x67],
+  IntlBackslash: ['non_us_backslash', 0x64],
+  // modifiers
+  ControlLeft:  ['left_control',  0xE0],
+  ShiftLeft:    ['left_shift',    0xE1],
+  AltLeft:      ['left_option',   0xE2],
+  MetaLeft:     ['left_command',  0xE3],
+  ControlRight: ['right_control', 0xE4],
+  ShiftRight:   ['right_shift',   0xE5],
+  AltRight:     ['right_option',  0xE6],
+  MetaRight:    ['right_command', 0xE7],
+  // japanese
+  IntlYen:    ['japanese_pc_yen',     0x89],
+  IntlRo:     ['international1',      0x87],
+  KanaMode:   ['international2',      0x88],
+  Convert:    ['japanese_pc_xfer',    0x8A],
+  NonConvert: ['japanese_pc_nfer',    0x8B],
+  Lang1:      ['japanese_pc_katakana',0x90],
+  Lang2:      ['japanese_pc_hiragana',0x91],
+  // misc
+  ContextMenu:    ['menu',         0x76],
+  AudioVolumeMute:['mute',         0x7F],
+  AudioVolumeUp:  ['volume_up',    0x80],
+  AudioVolumeDown:['volume_down',  0x81],
+  // legacy aliases (older browsers)
+  VolumeMute: ['mute',         0x7F],
+  VolumeUp:   ['volume_up',    0x80],
+  VolumeDown: ['volume_down',  0x81],
+};
+const MOD_GLYPHS = [
+  ['CapsLock', '⇪'],
+  ['Shift',    '⇧'],
+  ['Control',  '⌃'],
+  ['Alt',      '⌥'],
+  ['Meta',     '⌘'],
+];
+
+// ============= State =============
+const state = {
+  soundOn:  true,
+  tone:     'click',
+  volume:   0.8,    // 0..1.5
+  events:   [],
+  maxEvents: 500,
+};
+
+// ============= Sound (Web Audio API) =============
+let audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+function playClick() {
+  if (!state.soundOn) return;
+  ensureAudio();
+  if (!audioCtx) return;
+  const now = audioCtx.currentTime;
+  const params = ({
+    click: { f: 1500, dur: 0.030, decay: 6  },
+    beep:  { f:  880, dur: 0.080, decay: 3  },
+    pop:   { f:  600, dur: 0.025, decay: 5  },
+    tick:  { f: 4000, dur: 0.012, decay: 8  },
+  })[state.tone];
+  const osc  = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.value = params.f;
+  // amplitude envelope (matches the native EQ-style boost: peak 0.9 at vol=1.0,
+  // up to 1.35 at vol=1.5 — slight clipping above 100%, same trade-off)
+  const peak = Math.min(state.volume, 1.5) * 0.9;
+  gain.gain.setValueAtTime(peak, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + params.dur);
+  osc.connect(gain).connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + params.dur);
+}
+
+// ============= Knob (SVG arcs) =============
+const KNOB = {
+  cx: 42, cy: 42, r: 32,
+  startDeg: 225,    // compass, "off" position bottom-left
+  sweep: 270,       // total arc
+  maxValue: 1.5,
+};
+function compassPoint(cx, cy, r, deg) {
+  // 0 = north (up), 90 = east, clockwise
+  const rad = (deg - 90) * Math.PI / 180;
+  return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+}
+function arcPath(cx, cy, r, startDeg, endDeg) {
+  const span = endDeg - startDeg;
+  if (Math.abs(span) < 0.01) return '';
+  const start = compassPoint(cx, cy, r, startDeg);
+  const end   = compassPoint(cx, cy, r, endDeg);
+  const largeArc = Math.abs(span) > 180 ? 1 : 0;
+  const sweep = span > 0 ? 1 : 0;
+  return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} ` +
+         `A ${r} ${r} 0 ${largeArc} ${sweep} ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
+}
+const arcBg    = document.getElementById('arcBg');
+const arcLit   = document.getElementById('arcLit');
+const arcLit2  = document.getElementById('arcLit2');
+const arcPeak  = document.getElementById('arcPeak');
+const arcPeak2 = document.getElementById('arcPeak2');
+const indicator = document.getElementById('indicator');
+const knobPct  = document.getElementById('knobPct');
+
+function updateKnob() {
+  const v = state.volume;
+  const fraction = v / KNOB.maxValue;                  // 0..1
+  const fractionAt100 = 1.0 / KNOB.maxValue;           // 1/1.5
+  const angleDeg = KNOB.startDeg + fraction * KNOB.sweep;
+  const angle100 = KNOB.startDeg + fractionAt100 * KNOB.sweep;
+
+  // background full arc
+  arcBg.setAttribute('d', arcPath(KNOB.cx, KNOB.cy, KNOB.r, KNOB.startDeg, KNOB.startDeg + KNOB.sweep));
+  // lit cyan arc (0..min(angle, angle100))
+  const litEnd = Math.min(angleDeg, angle100);
+  arcLit.setAttribute('d', arcPath(KNOB.cx, KNOB.cy, KNOB.r, KNOB.startDeg, litEnd));
+  arcLit2.setAttribute('d', arcPath(KNOB.cx, KNOB.cy, KNOB.r, KNOB.startDeg, litEnd));
+  // peak red arc (angle100..angle when v > 1.0)
+  if (v > 1.0) {
+    arcPeak.setAttribute('d',  arcPath(KNOB.cx, KNOB.cy, KNOB.r, angle100, angleDeg));
+    arcPeak2.setAttribute('d', arcPath(KNOB.cx, KNOB.cy, KNOB.r, angle100, angleDeg));
+  } else {
+    arcPeak.setAttribute('d', '');
+    arcPeak2.setAttribute('d', '');
+  }
+  // indicator line — rotate from default vertical
+  const rotDeg = angleDeg; // since SVG angle 0 = top in our compass model... but transform rotate is clockwise from 12 o'clock if origin is correct
+  indicator.setAttribute('transform', `rotate(${rotDeg - 360 + 0} ${KNOB.cx} ${KNOB.cy})`);
+  // recolor indicator on peak
+  indicator.setAttribute('stroke', v > 1.0 ? '#FF5F5F' : '#5BD1FF');
+
+  knobPct.textContent = `${Math.round(v * 100)}%`;
+  knobPct.classList.toggle('peak', v > 1.0);
+}
+
+// drag handling
+const knob = document.getElementById('knob');
+let dragStartY = null, dragStartValue = null;
+knob.addEventListener('pointerdown', e => {
+  dragStartY = e.clientY;
+  dragStartValue = state.volume;
+  knob.setPointerCapture(e.pointerId);
+});
+knob.addEventListener('pointermove', e => {
+  if (dragStartY === null) return;
+  const dy = e.clientY - dragStartY;
+  const delta = -dy / 240 * KNOB.maxValue;
+  state.volume = Math.max(0, Math.min(KNOB.maxValue, dragStartValue + delta));
+  updateKnob();
+});
+knob.addEventListener('pointerup', e => { dragStartY = null; });
+knob.addEventListener('pointercancel', e => { dragStartY = null; });
+// scroll wheel fine adjust
+knob.addEventListener('wheel', e => {
+  e.preventDefault();
+  state.volume = Math.max(0, Math.min(KNOB.maxValue, state.volume - e.deltaY * 0.002));
+  updateKnob();
+}, { passive: false });
+
+// ============= Power button =============
+const powerBtn = document.getElementById('powerBtn');
+document.getElementById('powerWrap').addEventListener('click', () => {
+  state.soundOn = !state.soundOn;
+  powerBtn.classList.toggle('on', state.soundOn);
+});
+
+// ============= Tone selector =============
+document.getElementById('toneRow').addEventListener('click', e => {
+  const cap = e.target.closest('.keycap');
+  if (!cap) return;
+  state.tone = cap.dataset.tone;
+  document.querySelectorAll('#toneRow .keycap').forEach(el => {
+    el.classList.toggle('selected', el === cap);
+  });
+});
+
+// ============= Action buttons =============
+document.getElementById('btnTest').addEventListener('click', () => {
+  ensureAudio();
+  playClick();
+});
+document.getElementById('btnCopy').addEventListener('click', () => {
+  const text = state.events.map(e => {
+    let s = `${e.direction}\t${e.label}`;
+    if (e.flagsText) s += `  flags ${e.flagsText}`;
+    s += `  usage page: ${e.usagePage} (0x${e.usagePage.toString(16).padStart(4,'0')})  ` +
+         `usage: ${e.usage} (0x${e.usage.toString(16).padStart(4,'0')})`;
+    return s;
+  }).join('\n');
+  navigator.clipboard.writeText(text);
+});
+document.getElementById('btnClear').addEventListener('click', () => {
+  state.events = [];
+  renderLog();
+});
+
+// ============= Event capture =============
+function modifiersFromEvent(e) {
+  const parts = [];
+  if (e.getModifierState && e.getModifierState('CapsLock')) parts.push('caps_lock');
+  if (e.shiftKey) parts.push('shift');
+  if (e.ctrlKey)  parts.push('control');
+  if (e.altKey)   parts.push('option');
+  if (e.metaKey)  parts.push('command');
+  return parts.join(',');
+}
+
+function emit(direction, code, e, isMouse) {
+  if (isMouse) {
+    const btn = (e.button ?? 0) + 1;
+    return addEvent({
+      direction,
+      label: `{"pointing_button":"button${btn}"}`,
+      flagsText: modifiersFromEvent(e),
+      usagePage: 0x09,
+      usage: btn,
+      extra: null,
+    });
+  }
+  const map = HID_MAP[code];
+  const name = map ? map[0] : `key_code_${code}`;
+  const usage = map ? map[1] : 0;
+  const chars = (e.key && e.key.length === 1) ? e.key : '';
+  const extra = chars
+    ? `chars: "${chars}"  code: ${code}`
+    : `code: ${code}`;
+  addEvent({
+    direction,
+    label: `{"key_code":"${name}"}`,
+    flagsText: modifiersFromEvent(e),
+    usagePage: 0x07,
+    usage,
+    extra,
+  });
+}
+
+function addEvent(evt) {
+  state.events.push(evt);
+  if (state.events.length > state.maxEvents) {
+    state.events.splice(0, state.events.length - state.maxEvents);
+  }
+  appendRow(evt);
+  document.getElementById('evtCount').textContent = state.events.length;
+  if (state.events.length === 1) {
+    const empty = document.getElementById('emptyMsg');
+    if (empty) empty.remove();
+  }
+  playClick();
+}
+
+function appendRow(e) {
+  const row = document.createElement('div');
+  row.className = `row ${e.direction}`;
+
+  // accent bar
+  const accent = document.createElement('div');
+  accent.className = 'accent';
+  row.appendChild(accent);
+
+  // direction
+  const dir = document.createElement('div');
+  dir.className = 'dir';
+  dir.textContent = e.direction;
+  row.appendChild(dir);
+
+  // center column
+  const center = document.createElement('div');
+  center.className = 'center';
+
+  // syntax-highlighted JSON
+  const json = document.createElement('div');
+  json.className = 'json';
+  json.appendChild(span('punct', '{'));
+  json.appendChild(span('punct', '"'));
+  // detect key/value
+  const m = e.label.match(/^\{"([^"]+)":"([^"]+)"\}$/);
+  if (m) {
+    json.appendChild(span('key', m[1]));
+    json.appendChild(span('punct', '"'));
+    json.appendChild(span('punct', ':'));
+    json.appendChild(span('punct', '"'));
+    json.appendChild(span('value', m[2]));
+  } else {
+    json.appendChild(span('value', e.label));
+  }
+  json.appendChild(span('punct', '"'));
+  json.appendChild(span('punct', '}'));
+  center.appendChild(json);
+
+  // meta line
+  const meta = document.createElement('div');
+  meta.className = 'meta';
+  if (e.flagsText) {
+    const glyphs = MOD_GLYPHS
+      .filter(([needle, _]) => e.flagsText.includes(needle.toLowerCase()))
+      .map(([_, g]) => g);
+    glyphs.forEach(g => {
+      const chip = document.createElement('div');
+      chip.className = 'glyph-chip';
+      chip.textContent = g;
+      meta.appendChild(chip);
+    });
+  }
+  if (e.extra) {
+    const ex = document.createElement('span');
+    ex.className = 'extra';
+    ex.textContent = e.extra;
+    meta.appendChild(ex);
+  }
+  center.appendChild(meta);
+  row.appendChild(center);
+
+  // right cols
+  const right = document.createElement('div');
+  right.className = 'right-cols';
+  right.appendChild(makeCol('PAGE',
+    `${e.usagePage} (0x${e.usagePage.toString(16).padStart(4,'0')})`));
+  right.appendChild(makeCol('USAGE',
+    `${e.usage} (0x${e.usage.toString(16).padStart(4,'0')})`));
+  row.appendChild(right);
+
+  document.getElementById('logScroll').appendChild(row);
+  // auto-scroll
+  const sc = document.getElementById('logScroll');
+  sc.scrollTop = sc.scrollHeight;
+}
+
+function span(cls, text) {
+  const s = document.createElement('span');
+  s.className = cls;
+  s.textContent = text;
+  return s;
+}
+function makeCol(label, value) {
+  const col = document.createElement('div');
+  col.className = 'col';
+  const l = document.createElement('span');
+  l.className = 'col-label';
+  l.textContent = label;
+  const v = document.createElement('span');
+  v.className = 'col-value';
+  v.textContent = value;
+  col.append(l, v);
+  return col;
+}
+
+function renderLog() {
+  const sc = document.getElementById('logScroll');
+  sc.innerHTML = '';
+  if (state.events.length === 0) {
+    const e = document.createElement('div');
+    e.className = 'empty-msg';
+    e.id = 'emptyMsg';
+    e.textContent = 'Click anywhere or press a key to begin';
+    sc.appendChild(e);
+  }
+  document.getElementById('evtCount').textContent = state.events.length;
+}
+
+// keyboard
+window.addEventListener('keydown', e => {
+  ensureAudio();
+  // Block default browser shortcuts where we can, so the page stays focused.
+  // Cmd+W/Q/T/N/R can't be intercepted reliably — those will close/reload.
+  if (!(e.metaKey && ['w','q','t','n','r','l','f'].includes((e.key || '').toLowerCase()))) {
+    e.preventDefault();
+  }
+  if (e.repeat) return;
+  emit('down', e.code, e, false);
+});
+window.addEventListener('keyup', e => {
+  if (!(e.metaKey && ['w','q','t','n','r','l','f'].includes((e.key || '').toLowerCase()))) {
+    e.preventDefault();
+  }
+  emit('up', e.code, e, false);
+});
+// mouse
+window.addEventListener('mousedown', e => {
+  ensureAudio();
+  emit('down', null, e, true);
+});
+window.addEventListener('mouseup',   e => emit('up',   null, e, true));
+// suppress context menu on right click so we can detect button2/3 cleanly
+window.addEventListener('contextmenu', e => e.preventDefault());
+
+// initial render
+updateKnob();
+</script>
+</body>
+</html>
