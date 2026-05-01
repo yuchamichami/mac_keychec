@@ -627,21 +627,18 @@
   }
   .layout-key { cursor: pointer; }
 
-  /* ============= Xiao BLE pin panel ============= */
+  /* ============= Xiao BLE pin panel (SVG) ============= */
   .xiao-row {
     display: flex;
-    gap: 18px;
+    gap: 24px;
     margin-bottom: 14px;
     flex-wrap: wrap;
     justify-content: center;
   }
-  .xiao-board {
-    background: linear-gradient(180deg, #2a3140 0%, #1a1f2e 100%);
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 10px;
-    padding: 14px 18px 16px;
-    position: relative;
-    min-width: 200px;
+  .xiao-board-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   .xiao-side-label {
     font-size: 9px;
@@ -649,58 +646,113 @@
     letter-spacing: 3px;
     text-transform: uppercase;
     color: var(--text-secondary);
-    text-align: center;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
-  .xiao-usbc {
-    width: 32px;
-    height: 14px;
-    background: linear-gradient(180deg, #555 0%, #2a2a2a 100%);
-    border-radius: 3px 3px 6px 6px;
-    margin: 0 auto 10px;
-    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.5);
+  .xiao-svg {
+    width: 340px;
+    max-width: 100%;
+    height: auto;
   }
-  .xiao-pinlist {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
+  .xiao-svg .board-bg {
+    fill: #16181f;
+    stroke: rgba(255,255,255,0.10);
+    stroke-width: 1;
   }
-  .xiao-pin {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 8px;
-    border-radius: 4px;
-    background: rgba(255,255,255,0.03);
+  .xiao-svg .board-text {
+    fill: rgba(255,255,255,0.20);
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    text-anchor: middle;
+  }
+  .xiao-svg .usbc {
+    fill: #5e5e5e;
+    stroke: #2a2a2a;
+    stroke-width: 0.5;
+  }
+  .xiao-svg .pin-hole {
+    fill: #d4a93e;
+    stroke: rgba(255,255,255,0.2);
+    stroke-width: 0.5;
+  }
+  .xiao-svg .pin-hole-inner {
+    fill: #2a2a2a;
+  }
+  .xiao-svg .pin-pill {
+    stroke: rgba(0,0,0,0.4);
+    stroke-width: 0.5;
+  }
+  .xiao-svg .pill-digital  { fill: #5BA1D9; }
+  .xiao-svg .pill-analog   { fill: #F4A78A; }
+  .xiao-svg .pill-power    { fill: #D85959; }
+  .xiao-svg .pill-gnd      { fill: #1f1f1f; stroke: #555; }
+  .xiao-svg .pill-iic      { fill: #3EAEAA; }
+  .xiao-svg .pill-uart     { fill: #7D8090; }
+  .xiao-svg .pill-spi      { fill: #9B7BBF; }
+  .xiao-svg .pill-pinno    { fill: #7FB069; }
+  .xiao-svg .pill-nfc      { fill: #D85959; }
+  .xiao-svg .pill-text {
+    fill: #ffffff;
     font-family: ui-monospace, 'SF Mono', monospace;
-    font-size: 11px;
-    cursor: pointer;
-    transition: background 120ms;
-    border-left: 3px solid transparent;
-  }
-  .xiao-pin:hover { background: rgba(91,209,255,0.08); }
-  .xiao-pin .pinlabel {
     font-weight: 700;
-    min-width: 40px;
-    color: var(--text-primary);
+    font-size: 9.5px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
   }
-  .xiao-pin .pin-count {
-    color: var(--text-secondary);
-    font-size: 10px;
-    margin-left: auto;
+  .xiao-svg .pill-text.dark { fill: #1a1a1a; }
+  .xiao-svg .pin-meta {
+    fill: var(--text-secondary);
+    font-family: ui-monospace, 'SF Mono', monospace;
+    font-size: 8px;
+    pointer-events: none;
   }
-  .xiao-pin.has-dead {
-    background: rgba(255,95,95,0.10);
-    border-left-color: var(--peak-red);
+  /* Charlieplex active pin: gold halo + highlighted pill */
+  .xiao-svg g.pin.charlieplex .pin-hole {
+    fill: #ffd24a;
+    filter: drop-shadow(0 0 4px rgba(255,210,74,0.8));
   }
-  .xiao-pin.has-dead .pinlabel { color: var(--peak-red); }
-  .xiao-pin.has-dead .pin-count {
-    color: var(--peak-red);
+  /* Pin with dead keys */
+  .xiao-svg g.pin.has-dead .pin-hole {
+    fill: var(--peak-red);
+    filter: drop-shadow(0 0 6px rgba(255,95,95,0.9));
+  }
+  .xiao-svg g.pin.has-dead .pin-pill {
+    stroke: var(--peak-red);
+    stroke-width: 1.5;
+  }
+  /* Highlighted (selected) pin */
+  .xiao-svg g.pin.highlighted .pin-hole {
+    fill: var(--accent-cyan);
+    filter: drop-shadow(0 0 6px rgba(91,209,255,0.9));
+  }
+  .xiao-svg g.pin.highlighted .pin-pill {
+    stroke: var(--accent-cyan);
+    stroke-width: 2;
+  }
+  .xiao-svg g.pin.charlieplex { cursor: pointer; }
+  .xiao-svg g.pin.charlieplex:hover .pin-pill { filter: brightness(1.15); }
+  .xiao-svg .nfc-pad {
+    fill: #16181f;
+    stroke: rgba(255,255,255,0.08);
+    stroke-dasharray: 2,2;
+  }
+  .xiao-svg .dead-badge {
+    fill: var(--peak-red);
+  }
+  .xiao-svg .dead-text {
+    fill: white;
+    font-family: ui-sans-serif, system-ui, sans-serif;
     font-weight: 700;
+    font-size: 9px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
   }
-  .xiao-pin.highlighted {
-    background: rgba(91,209,255,0.14);
-    border-left-color: var(--accent-cyan);
+  .xiao-svg .keys-count {
+    fill: var(--text-secondary);
+    font-family: ui-monospace, 'SF Mono', monospace;
+    font-size: 8px;
+    pointer-events: none;
   }
 
   .matrix-summary {
@@ -2482,11 +2534,12 @@ function renderMatrix() {
     });
   });
 
-  // Click on pin → highlight all keys touching that pin
-  body.querySelectorAll('.xiao-pin').forEach(el => {
+  // Click on a charlieplex pin (SVG group) → highlight all keys touching it
+  body.querySelectorAll('.xiao-svg g.pin.charlieplex').forEach(el => {
     el.addEventListener('click', () => {
-      const side = el.dataset.side;
-      const pin  = parseInt(el.dataset.pin, 10);
+      const side = el.getAttribute('data-side');
+      const pin  = parseInt(el.getAttribute('data-pin'), 10);
+      if (!side || isNaN(pin)) return;
       const sig = `${side}:${pin}`;
       matrixState.highlightPin =
         matrixState.highlightPin === sig ? null : sig;
@@ -2525,49 +2578,194 @@ function escapeHtml(s) {
     ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
 }
 
+// Xiao BLE physical pinout (matches the official pinout image).
+// Each pin entry: primary label + GPIO + alternate function labels + type.
+const XIAO_PIN_LAYOUT = {
+  // Left side, top-to-bottom (USB-C is at top)
+  left: [
+    { primary: 'D0', gpio: 'P0.02', alts: ['A0'],         type: 'digital' },
+    { primary: 'D1', gpio: 'P0.03', alts: ['A1'],         type: 'digital' },
+    { primary: 'D2', gpio: 'P0.28', alts: ['A2'],         type: 'digital' },
+    { primary: 'D3', gpio: 'P0.29', alts: ['A3'],         type: 'digital' },
+    { primary: 'D4', gpio: 'P0.04', alts: ['A4', 'SDA'],  type: 'digital' },
+    { primary: 'D5', gpio: 'P0.05', alts: ['A5', 'SCL'],  type: 'digital' },
+    { primary: 'D6', gpio: 'P1.11', alts: ['TX'],         type: 'digital' },
+  ],
+  // Right side, top-to-bottom
+  right: [
+    { primary: '5V',  gpio: '+5V',   alts: [],            type: 'power'   },
+    { primary: 'GND', gpio: 'GND',   alts: [],            type: 'gnd'     },
+    { primary: '3V3', gpio: '+3V3',  alts: [],            type: 'power'   },
+    { primary: 'D10', gpio: 'P1.15', alts: ['MOSI'],      type: 'digital' },
+    { primary: 'D9',  gpio: 'P1.14', alts: ['MISO'],      type: 'digital' },
+    { primary: 'D8',  gpio: 'P1.13', alts: ['SCK'],       type: 'digital' },
+    { primary: 'D7',  gpio: 'P1.12', alts: ['RX'],        type: 'digital' },
+  ],
+  // Hidden NFC pads on the back of the board
+  nfc: [
+    { primary: 'P0.10', gpio: 'P0.10', alts: ['NFC1'],    type: 'nfc' },
+    { primary: 'P0.09', gpio: 'P0.09', alts: ['NFC2'],    type: 'nfc' },
+  ],
+};
+
+function findXiaoPinPosition(label) {
+  for (const where of ['left', 'right', 'nfc']) {
+    const idx = XIAO_PIN_LAYOUT[where].findIndex(p =>
+      p.primary === label || p.gpio === label);
+    if (idx >= 0) return { where, idx, info: XIAO_PIN_LAYOUT[where][idx] };
+  }
+  return null;
+}
+
 function renderXiaoBoards(ps) {
   const totalIncidence = pinIncidenceOf(ps.positions);
   const deadIncidence = matrixState.marked
     ? pinIncidenceOf(ps.positions.filter(p => p.testable && !matrixState.pressed.has(p.idx)))
     : { L: {}, R: {} };
 
-  const html = ['L', 'R'].map(side => {
-    const labels = side === 'L' ? ps.pinLabelsL : ps.pinLabelsR;
-    const N = ps.pinsPerSide;
-    const sideName = side === 'L' ? 'Left half' : 'Right half';
-    const hi = matrixState.highlightPin && matrixState.highlightPin.startsWith(side + ':')
-      ? parseInt(matrixState.highlightPin.split(':')[1], 10) : null;
-    let target = null;
-    if (matrixState.highlightIdx !== null) {
-      target = ps.positions.find(p => p.idx === matrixState.highlightIdx);
-      if (target && target.side !== side) target = null;
-    }
-    let pinsHtml = '';
-    for (let i = 0; i < N; i++) {
-      const total = totalIncidence[side][i] || 0;
-      const dead  = deadIncidence[side][i] || 0;
-      const cls = ['xiao-pin'];
-      if (dead >= 2) cls.push('has-dead');
-      if (i === hi) cls.push('highlighted');
-      if (target && (target.driver === i || target.sensor === i)) cls.push('highlighted');
-      const lab = labels[i] || `P${i}`;
-      const role = target && target.driver === i ? ' driver'
-                : target && target.sensor === i ? ' sensor' : '';
-      pinsHtml += `<div class="${cls.join(' ')}" data-side="${side}" data-pin="${i}" title="GPIO ${lab}, used by ${total} keys">
-        <span class="pinlabel">${lab}</span>
-        <span class="pin-count">${dead > 0 ? `<span style="color:var(--peak-red);font-weight:700;">${dead} dead</span> · ` : ''}${total} keys${role}</span>
-      </div>`;
-    }
-    return `
-      <div class="xiao-board">
-        <div class="xiao-side-label">${sideName} · Xiao BLE</div>
-        <div class="xiao-usbc"></div>
-        <div class="xiao-pinlist">${pinsHtml}</div>
-      </div>
-    `;
-  }).join('');
+  return ['L', 'R'].map(side =>
+    renderXiaoBoardSVG(side, ps, totalIncidence, deadIncidence)
+  ).join('');
+}
 
-  return html;
+function renderXiaoBoardSVG(side, ps, totalIncidence, deadIncidence) {
+  const labels = side === 'L' ? ps.pinLabelsL : ps.pinLabelsR;
+  const sideName = side === 'L' ? 'Left half' : 'Right half';
+
+  // Build mapping: charlieplex pin index -> Xiao layout position
+  // labels[i] is e.g. "D1" or "P0.09"; resolve each.
+  const cpToXiao = labels.map(label => findXiaoPinPosition(label));
+
+  // Selected key for highlight
+  let target = null;
+  if (matrixState.highlightIdx !== null) {
+    target = ps.positions.find(p => p.idx === matrixState.highlightIdx);
+    if (target && target.side !== side) target = null;
+  }
+  const hiPinIdx = matrixState.highlightPin && matrixState.highlightPin.startsWith(side + ':')
+    ? parseInt(matrixState.highlightPin.split(':')[1], 10) : null;
+
+  // Geometry — modelled loosely on the Seeed pinout image
+  const W = 340, H = 360;
+  const boardX = 96, boardY = 24, boardW = 148, boardH = 280;
+  const usbcW = 48, usbcH = 14;
+  const pinSpacing = 36;
+  const pinStartY = boardY + 26;
+  const holeR = 6;
+  const pillW = 38, pillH = 18;
+
+  const svg = [];
+  svg.push(`<svg class="xiao-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`);
+
+  // Board outline
+  svg.push(`<rect class="usbc" x="${boardX + boardW/2 - usbcW/2}" y="${boardY - usbcH + 2}" width="${usbcW}" height="${usbcH}" rx="2" ry="2"/>`);
+  svg.push(`<rect class="board-bg" x="${boardX}" y="${boardY}" width="${boardW}" height="${boardH}" rx="6" ry="6"/>`);
+  svg.push(`<text class="board-text" x="${boardX + boardW/2}" y="${boardY + 110}" font-size="11">seeed</text>`);
+  svg.push(`<text class="board-text" x="${boardX + boardW/2}" y="${boardY + 124}" font-size="8">Xiao BLE</text>`);
+  svg.push(`<text class="board-text" x="${boardX + boardW/2}" y="${boardY + 138}" font-size="7" style="opacity:0.6">nRF52840</text>`);
+
+  // Helper: render a pin at index `i` on `whereSide` ('left' or 'right')
+  function renderPin(whereSide, i) {
+    const info = XIAO_PIN_LAYOUT[whereSide][i];
+    const yPin = pinStartY + i * pinSpacing;
+    const holeX = whereSide === 'left' ? boardX + 10 : boardX + boardW - 10;
+    const pillX = whereSide === 'left' ? holeX - 16 - pillW : holeX + 16;
+    const pillCenterX = pillX + pillW / 2;
+    const cpIdx = cpToXiao.findIndex(p => p && p.where === whereSide && p.idx === i);
+
+    const cls = ['pin'];
+    let dead = 0, total = 0;
+    if (cpIdx >= 0) {
+      cls.push('charlieplex');
+      total = totalIncidence[side][cpIdx] || 0;
+      dead  = deadIncidence[side][cpIdx]  || 0;
+      if (dead >= 1) cls.push('has-dead');
+      if (target && (target.driver === cpIdx || target.sensor === cpIdx)) cls.push('highlighted');
+      if (hiPinIdx === cpIdx) cls.push('highlighted');
+    }
+
+    const pillClass = `pill-${info.type}`;
+    const textClass = info.type === 'gnd' ? 'pill-text' : 'pill-text';
+
+    let g = `<g class="${cls.join(' ')}"${cpIdx >= 0 ? ` data-side="${side}" data-pin="${cpIdx}"` : ''}>`;
+    // Trace from pill to hole
+    if (whereSide === 'left') {
+      g += `<line class="pin-trace" x1="${pillX + pillW}" y1="${yPin}" x2="${holeX - holeR}" y2="${yPin}" stroke="rgba(212,169,62,0.4)" stroke-width="1"/>`;
+    } else {
+      g += `<line class="pin-trace" x1="${holeX + holeR}" y1="${yPin}" x2="${pillX}" y2="${yPin}" stroke="rgba(212,169,62,0.4)" stroke-width="1"/>`;
+    }
+    // Pill (label block)
+    g += `<rect class="pin-pill ${pillClass}" x="${pillX}" y="${yPin - pillH/2}" width="${pillW}" height="${pillH}" rx="3" ry="3"/>`;
+    g += `<text class="${textClass}" x="${pillCenterX}" y="${yPin + 0.5}">${escapeHtml(info.primary)}</text>`;
+    // Secondary labels (gpio number + alts), placed further outside
+    const metaX = whereSide === 'left' ? pillX - 4 : pillX + pillW + 4;
+    const metaAnchor = whereSide === 'left' ? 'end' : 'start';
+    const metaParts = [info.gpio, ...info.alts];
+    metaParts.forEach((p, mi) => {
+      g += `<text class="pin-meta" x="${metaX}" y="${yPin + (mi - (metaParts.length - 1) / 2) * 9 + 2.5}" text-anchor="${metaAnchor}">${escapeHtml(p)}</text>`;
+    });
+    // Pin hole (gold pad)
+    g += `<circle class="pin-hole" cx="${holeX}" cy="${yPin}" r="${holeR}"/>`;
+    g += `<circle class="pin-hole-inner" cx="${holeX}" cy="${yPin}" r="${holeR/2}"/>`;
+    // Charlieplex info next to hole (inside board)
+    if (cpIdx >= 0 && total > 0) {
+      const insideX = whereSide === 'left' ? holeX + holeR + 5 : holeX - holeR - 5;
+      const insideAnchor = whereSide === 'left' ? 'start' : 'end';
+      g += `<text class="keys-count" x="${insideX}" y="${yPin - 2}" text-anchor="${insideAnchor}">${total} keys</text>`;
+      if (dead > 0) {
+        // Dead badge
+        const badgeX = whereSide === 'left' ? holeX + holeR + 12 : holeX - holeR - 12;
+        const badgeY = yPin + 8;
+        g += `<circle class="dead-badge" cx="${badgeX}" cy="${badgeY}" r="7"/>`;
+        g += `<text class="dead-text" x="${badgeX}" y="${badgeY + 0.5}">${dead}</text>`;
+      }
+    }
+    g += `</g>`;
+    return g;
+  }
+
+  for (let i = 0; i < XIAO_PIN_LAYOUT.left.length; i++) svg.push(renderPin('left', i));
+  for (let i = 0; i < XIAO_PIN_LAYOUT.right.length; i++) svg.push(renderPin('right', i));
+
+  // NFC pads on the back (small panel below the board)
+  const nfcUsed = XIAO_PIN_LAYOUT.nfc.some((p, i) =>
+    cpToXiao.some(cp => cp && cp.where === 'nfc' && cp.idx === i));
+  if (nfcUsed) {
+    const nfcY = boardY + boardH + 14;
+    svg.push(`<rect class="nfc-pad" x="${boardX + 20}" y="${nfcY}" width="${boardW - 40}" height="34" rx="4" ry="4"/>`);
+    svg.push(`<text class="nfc-label" x="${boardX + boardW/2}" y="${nfcY + 8}">back · NFC pads</text>`);
+    XIAO_PIN_LAYOUT.nfc.forEach((info, i) => {
+      const cpIdx = cpToXiao.findIndex(p => p && p.where === 'nfc' && p.idx === i);
+      const cx = boardX + 40 + i * (boardW - 80);
+      const cy = nfcY + 22;
+      const cls = ['pin'];
+      if (cpIdx >= 0) {
+        cls.push('charlieplex');
+        const dead  = deadIncidence[side][cpIdx] || 0;
+        if (dead >= 1) cls.push('has-dead');
+        if (target && (target.driver === cpIdx || target.sensor === cpIdx)) cls.push('highlighted');
+        if (hiPinIdx === cpIdx) cls.push('highlighted');
+      }
+      svg.push(`<g class="${cls.join(' ')}"${cpIdx >= 0 ? ` data-side="${side}" data-pin="${cpIdx}"` : ''}>`);
+      svg.push(`<rect class="pin-pill pill-nfc" x="${cx - 22}" y="${cy - 9}" width="44" height="18" rx="3" ry="3"/>`);
+      svg.push(`<text class="pill-text" x="${cx}" y="${cy + 0.5}">${escapeHtml(info.primary)}</text>`);
+      if (cpIdx >= 0) {
+        const total = totalIncidence[side][cpIdx] || 0;
+        const dead  = deadIncidence[side][cpIdx]  || 0;
+        svg.push(`<text class="keys-count" x="${cx}" y="${cy + 22}" text-anchor="middle">${total} keys${dead > 0 ? ', ' + dead + ' dead' : ''}</text>`);
+      }
+      svg.push(`</g>`);
+    });
+  }
+
+  svg.push(`</svg>`);
+
+  return `
+    <div class="xiao-board-wrap">
+      <div class="xiao-side-label">${sideName} · Xiao BLE</div>
+      ${svg.join('')}
+    </div>
+  `;
 }
 
 function applyHighlights(body) {
