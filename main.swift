@@ -322,7 +322,7 @@ final class KeyMonitor: ObservableObject {
     }
 }
 
-// MARK: - Design tokens (from Cladesign_export2/tokens.json)
+// MARK: - Design tokens (from design/ui/tokens.json)
 
 extension Color {
     static let bgWindow      = Color(red: 0.043, green: 0.063, blue: 0.188) // #0B1030
